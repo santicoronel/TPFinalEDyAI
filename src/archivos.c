@@ -32,3 +32,12 @@ Resultado leer_numero(FILE* fp, unsigned int* n) {
     return ERROR_FORMATO;
   }
 }
+
+void escribir_cabecera(FILE* fp) {
+  fprintf(fp, "nombre,apellido,edad,telefono\n");
+}
+
+void escribir_contacto(FILE* fp, Contacto contacto) {
+  fprintf(fp, "%s,%s,%u,%s\n", 
+    contacto->nombre, contacto->apellido, contacto->edad, contacto->telefono);
+}

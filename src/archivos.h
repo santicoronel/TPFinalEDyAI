@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#include "contacto.h"
+
 typedef enum {
   COMA,
   SALTO_LINEA,
@@ -14,5 +16,7 @@ typedef enum {
 
 Resultado leer_palabra(FILE* fp, int strlen, char* palabra);
 Resultado leer_numero(FILE* fp, unsigned int* n);
+void escribir_cabecera(FILE* fp);
+void escribir_contacto(FILE* fp, Contacto contacto);
 
 #endif /* __ARCHIVOS_H__ */

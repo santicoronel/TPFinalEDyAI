@@ -168,7 +168,8 @@ static void cargar(TablaHash tabla) {
   if (!cabecera_valida(fp)) {
     fclose(fp); return;
   }
-  char* input[4]; unsigned int edad;
+  char* input[4] = {NULL, NULL, NULL, NULL}; 
+  unsigned int edad;
   Resultado res; int seguir = 1;
   while(seguir) {
     for (int i = 0; i < 4; i++) {
@@ -190,7 +191,7 @@ static void cargar(TablaHash tabla) {
         if (i == 0) {
           seguir = 0; break;
         }
-        // falthrough
+      // falthrough
       case ERROR_EOF:
         manejar_error(CARGAR_EOF); seguir = 0;
         break;
@@ -235,6 +236,7 @@ void iniciar_interfaz(TablaHash tabla) {
       editar(tabla);
       break;
     case 5:
+      cargar(tabla);
       break;
     case 6:
       break;
