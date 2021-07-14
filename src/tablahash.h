@@ -14,6 +14,8 @@ typedef void (*FuncionDestructora)(void *dato);
 typedef unsigned (*FuncionHash)(void *dato);
 /** Retorna un entero sin signo para el dato */
 
+/* TODO: implementar funcion cast?? */
+
 typedef struct _TablaHash *TablaHash;
 
 /**

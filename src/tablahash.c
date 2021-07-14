@@ -32,27 +32,30 @@ unsigned int tablahash_nelems(TablaHash tabla) { return tabla->nelems; }
 unsigned int tablahash_capacidad(TablaHash tabla) { return tabla->capacidad; }
 
 void tablahash_destruir(TablaHash tabla) {
-  for (unsigned int i = 0; i < tabla->capacidad; i++) {
-    if (!dato_vacio(tabla->elems[i]))
+  for (unsigned int i = 0, j = 0; j < tabla->nelems; i++) {
+    if (!dato_vacio(tabla->elems[i])) {
       tabla->destr(tabla->elems[i]);
+      j++;
+    }
   }
   free(tabla->elems);
   free(tabla);
 }
 
 static void tablahash_redimensionar(TablaHash tabla) {
-  void* elems[tabla->nelems]; unsigned int it = 0;
-  for (unsigned int i = 0; i < tabla->capacidad && it < tabla->nelems; i++) {
+  void* elems[tabla->nelems];
+  for (unsigned int i = 0, j = 0; j < tabla->nelems; i++) {
     if (!dato_vacio(tabla->elems[i])) {
-      elems[it] = tabla->elems[i];
-      it++;  
+      elems[j] = tabla->elems[i];
+      j++;  
     }
   }
   free(tabla->elems);
   tabla->capacidad = (tabla->nelems * 100) / FACTOR_CARGA_INI;
   tabla->elems = malloc(sizeof(*tabla->elems) * tabla->capacidad);
   assert(tabla->elems);
-  for (it = 0; it < tabla->nelems; it++) tablahash_insertar(tabla, elems[it]);
+  for (unsigned int j = 0; j < tabla->nelems; j++) 
+    tablahash_insertar(tabla, elems[j]);
 }
 
 void tablahash_insertar(TablaHash tabla, void *dato) {
