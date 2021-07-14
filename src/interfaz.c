@@ -161,7 +161,56 @@ static int cabecera_valida(FILE* fp) {
 }
 
 static void cargar(TablaHash tabla) {
-  
+  char ruta[STRLEN];
+  printf("Ingrese ruta de entrada:\n>");
+  scanf("%s", ruta);
+  FILE* fp = fopen(ruta, "r");
+  if (!cabecera_valida(fp)) {
+    fclose(fp); return;
+  }
+  char* input[4]; unsigned int edad;
+  Resultado res; int seguir = 1;
+  while(seguir) {
+    for (int i = 0; i < 4; i++) {
+      if (i == 2) res = leer_numero(fp, &edad);
+      else {
+        input[i] = malloc(STRLEN); assert(input);
+        res = leer_palabra(fp, STRLEN, leer_palabra);
+      }
+      switch(res) {
+      case COMA:
+        if (i == 3) {
+          manejar_error(CARGAR_COMA); seguir = 0;
+        }
+      case SALTO_LINEA:
+        if (i != 3) {
+          manejar_error(CARGAR_SALTO_LINEA); seguir = 0;
+        }
+      case FINAL:
+        if (i == 0) {
+          seguir = 0; break;
+        }
+        // falthrough
+      case ERROR_EOF:
+        manejar_error(CARGAR_EOF); seguir = 0;
+        break;
+      case ERROR_LARGO:
+        manejar_error(CARGAR_LARGO); seguir = 0;
+        break;
+      case ERROR_FORMATO:
+        manejar_error(ERROR_LARGO); seguir = 0;
+        break;
+      }
+    }
+    if (seguir) {
+      tablahash_insertar(tabla, 
+        contacto_crear(input[0], input[1], edad, input[3]));
+        input[0] = NULL; input[1] = NULL; input[3] = NULL;
+    }
+  }
+  free(input[0]); free(input[1]); free(input[3]);
+
+  fclose(fp);
 }
 
 void iniciar_interfaz(TablaHash tabla) {
