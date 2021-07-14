@@ -2,11 +2,51 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "contacto.h"
 #include "utils.h"
+#include "archivos.h"
 
 #define STRLEN 50
+
+typedef enum {
+  CARGAR_COMA,
+  CARGAR_SALTO_LINEA,
+  CARGAR_CABECERA,
+  CARGAR_VACIO,
+  CARGAR_EOF,
+  CARGAR_LARGO,
+  CARGAR_FORMATO,
+} Error;
+
+static void manejar_error(Error error) {
+  switch(error) {
+  case CARGAR_COMA:
+    puts("Coma inesperada, se esperaba un salto de linea");
+    break;
+  case CARGAR_SALTO_LINEA:
+    puts("Salto de linea inesperado, se esperaba una coma");
+    break;
+  case CARGAR_CABECERA:
+    puts("Error de cabecera");
+    break;
+  case CARGAR_VACIO:
+    puts("Archivo vacio");
+    break;
+  case CARGAR_EOF:
+    puts("Final del archivo inesperado.");
+    break;
+  case CARGAR_LARGO:
+    puts("La palabra es demasiado larga. "
+      "Deben cargarse nombres, apellidos o telefonos reales");
+  case CARGAR_FORMATO:
+    puts("Error de formato.");
+    break;
+  default:
+    assert(0);
+  }
+}
 
 static void print_menu() {
   printf("Menu de acciones:\n"
@@ -38,16 +78,21 @@ static void buscar(TablaHash tabla) {
 }
 
 static void agregar(TablaHash tabla) {
-  Contacto contacto = malloc(sizeof(*contacto));
+  char* nombre = malloc(sizeof(STRLEN)); assert(nombre);
   printf("Ingrese nombre:\n>");
-  fgets(contacto->nombre, STRLEN, stdin);
+  fgets(nombre, STRLEN, stdin);
+  char* apellido = malloc(sizeof(STRLEN)); assert(apellido);
   printf("Ingrese apellido:\n>");
-  fgets(contacto->apellido, STRLEN, stdin);
+  fgets(apellido, STRLEN, stdin);
+  unsigned int edad;
   printf("Ingrese edad:\n>");
-  scanf("%u", &contacto->edad);
+  scanf("%u", &edad);
+  char* telefono = malloc(sizeof(STRLEN)); assert(telefono);
   printf("Ingrese telefono:\n>");
-  fgets(contacto->telefono, STRLEN, stdin);
-  tablahash_insertar(tabla, contacto);
+  fgets(telefono, STRLEN, stdin);
+  
+  Contacto contacto = contacto_crear(nombre, apellido, edad, telefono);
+  tablahash_insertar(tabla, contacto); 
 }
 
 static void eliminar(TablaHash tabla) {
@@ -61,20 +106,58 @@ static void eliminar(TablaHash tabla) {
 
 static void editar(TablaHash tabla) {
   printf("Ingrese nombre:\n>");
-  char nombre = malloc(STRLEN);
-  fgets(nombre, STRLEN, stdin);
+  char nombre[STRLEN]; fgets(nombre, STRLEN, stdin);
   printf("Ingrese apellido:\n>");
-  char apellido = malloc(STRLEN);
-  fgets(apellido, STRLEN, stdin);
+  char apellido[STRLEN]; fgets(apellido, STRLEN, stdin);
   char* nombre_apellido[2] = {nombre, apellido};
-  Contacto res = tablahash_buscar(tabla, nombre_apellido);
-  if (res) {
-  printf("Ingrese edad:\n>");
-  scanf("%u", &res->edad);
-  printf("Ingrese telefono:\n>");
-  fgets(res->telefono, STRLEN, stdin);
+  Contacto contacto = tablahash_buscar(tabla, nombre_apellido);
+  if (contacto) {
+    printf("Ingrese edad:\n>");
+    scanf("%u", &contacto->edad);
+    printf("Ingrese nombre:\n>");
+    fgets(contacto->telefono, STRLEN, stdin);
   }
-  else puts("No se ha encontrado el contacto.");
+  else puts("No se ha encontrado el contacto");
+}
+
+static int cabecera_valida(FILE* fp) {
+  char keywords[] = {"nombre", "apellido", "edad", "telefono"};
+  char input[STRLEN];
+  for (int i = 0; i < 4; i++) {
+    switch (leer_palabra(fp, STRLEN, input)) {
+    case COMA:
+      if (i == 3) {
+        manejar_error(CARGAR_COMA); return 0;
+      }
+      if ((strcmp(input, keywords[i]) != 0)) {
+        manejar_error(CARGAR_CABECERA); return 0;
+      }
+      break;
+    case SALTO_LINEA:
+      if (i != 3) {
+        manejar_error(CARGAR_SALTO_LINEA); return 0;
+      }
+      if ((strcmp(input, keywords[i]) != 0)) {
+        manejar_error(CARGAR_CABECERA); return 0;
+      }
+      break;
+    case FINAL:
+      if (i == 0) {
+        manejar_error(CARGAR_VACIO); return 0;
+      }
+      //fallthrough
+    case ERROR_EOF:
+      manejar_error(CARGAR_EOF); return 0;
+      break;
+    case ERROR_LARGO:
+      manejar_error(CARGAR_LARGO); return 0;
+      break;
+    case ERROR_FORMATO:
+      manejar_error(ERROR_FORMATO); return 0;
+      break;
+    }
+  }
+  return 1;
 }
 
 static void cargar(TablaHash tabla) {
