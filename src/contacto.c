@@ -20,12 +20,17 @@ Contacto contacto_destruir(Contacto contacto) {
   free(contacto);
 }
 
+int contacto_coincide(Contacto contacto, char* nombre_apellido[2]) {
+  return (strcmp(contacto->nombre, nombre_apellido[0]) == 0) &&
+    (strcmp(contacto->apellido, nombre_apellido[1]) == 0); 
+}
+
 int contacto_comparar_nombre(Contacto contacto1, Contacto contacto2) {
-  return strcmp(contacto1, contacto2);
+  return strcmp(contacto1, contacto2) == 0;
 }
 
 int contacto_comparar_apellido(Contacto contacto1, Contacto contacto2) {
-  return strcmp(contacto1, contacto2);
+  return strcmp(contacto1, contacto2) == 0;
 }
 
 int contacto_comparar_edad(Contacto contacto1, Contacto contacto2) {
@@ -34,7 +39,7 @@ int contacto_comparar_edad(Contacto contacto1, Contacto contacto2) {
 }
 
 int contacto_comparar_telefono(Contacto contacto1, Contacto contacto2) {
-  return strcmp(contacto1, contacto2);
+  return strcmp(contacto1, contacto2) == 0;
 }
 
 unsigned int contacto_hashear(Contacto contacto) {
