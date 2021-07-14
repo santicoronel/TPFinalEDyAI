@@ -4,17 +4,23 @@
 #define FACTOR_CARGA_INI 30
 #define FACTOR_CARGA_MAX 70
 
-typedef void *(*FuncionCopiadora)(void *dato);
-/** Retorna una copia fisica del dato */
-typedef int (*FuncionComparadora)(void *dato1, void *dato2);
+typedef int (*FuncionComparadora)(void* dato1, void* dato2);
 /** Retorna un entero negativo si dato1 < dato2, 0 si son iguales y un entero
  * positivo si dato1 > dato2  */
-typedef void (*FuncionDestructora)(void *dato);
+typedef void (*FuncionDestructora)(void* dato);
 /** Libera la memoria alocada para el dato */
-typedef unsigned (*FuncionHash)(void *dato);
+typedef unsigned (*FuncionHash)(void* dato);
 /** Retorna un entero sin signo para el dato */
+typedef void (*FuncionVisitante)(void* dato, void* extra);
 
-/* TODO: implementar funcion cast?? */
+struct _TablaHash {
+  void** elems;
+  unsigned int capacidad;
+  unsigned int nelems;
+  FuncionComparadora comp;
+  FuncionDestructora destr;
+  FuncionHash hash;
+};
 
 typedef struct _TablaHash *TablaHash;
 
@@ -54,5 +60,7 @@ void* tablahash_buscar(TablaHash tabla, void *dato);
  * Elimina el dato de la tabla que coincida con el dato dado.
  */
 void tablahash_eliminar(TablaHash tabla, void *dato);
+
+void tablahash_recorrer(TablaHash tabla, FuncionVisitante visit, void* extra);
 
 #endif /* __TABLA_HASH__ */

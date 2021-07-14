@@ -4,15 +4,6 @@
 #include <assert.h>
 
 #define CENTINELA -1
- 
-struct _TablaHash {
-  void** elems;
-  unsigned int capacidad;
-  unsigned int nelems;
-  FuncionComparadora comp;
-  FuncionDestructora destr;
-  FuncionHash hash;
-};
 
 static int dato_vacio(void* dato) { 
   return (dato == NULL) || (dato == CENTINELA); 
@@ -94,5 +85,16 @@ void tablahash_eliminar(TablaHash tabla, void *dato) {
     if ((elem != CENTINELA) && (tabla->comp(elem, dato) == 0))
       tabla->destr(elem);
       tabla->elems[pos] = CENTINELA;
+  }
+}
+
+void tablahash_recorrer(TablaHash tabla, FuncionVisitante visit, void* extra) {
+  void* elem;
+  for (unsigned int i = 0, j = 0; j < tabla->nelems; i++) {
+    elem = tabla->elems[i];
+    if(!dato_vacio(elem)) {
+      visit(elem, extra);
+      j++;
+    }
   }
 }
