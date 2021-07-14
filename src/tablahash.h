@@ -17,6 +17,12 @@ typedef unsigned (*FuncionHash)(void *dato);
 typedef struct _TablaHash *TablaHash;
 
 /**
+ * Crea una nueva tabla hash vacia, con la capacidad dada.
+ */
+TablaHash tablahash_crear(unsigned int capacidad, FuncionComparadora comp, 
+  FuncionDestructora destr, FuncionHash hash);
+
+/**
  * Retorna el numero de elementos de la tabla.
  */
 unsigned int tablahash_nelems(TablaHash tabla);
@@ -46,7 +52,5 @@ void* tablahash_buscar(TablaHash tabla, void *dato);
  * Elimina el dato de la tabla que coincida con el dato dado.
  */
 void tablahash_eliminar(TablaHash tabla, void *dato);
-
-void tablahash_redimensionar(TablaHash tabla);
 
 #endif /* __TABLA_HASH__ */

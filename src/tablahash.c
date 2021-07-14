@@ -1,6 +1,7 @@
 #include "tablahash.h"
 
 #include <stdlib.h>
+#include <assert.h>
 
 #define CENTINELA -1
  
@@ -17,10 +18,18 @@ static int dato_vacio(void* dato) {
   return (dato == NULL) || (dato == CENTINELA); 
 }
 
+TablaHash tablahash_crear(unsigned int capacidad, FuncionComparadora comp, 
+  FuncionDestructora destr, FuncionHash hash) {
+  TablaHash tabla = malloc(sizeof(*tabla));
+  void** elems = malloc(sizeof(*elems) * capacidad);
+  assert(elems);
+  *tabla = (struct _TablaHash) {elems, capacidad, 0, comp, destr, hash};
+  return tabla;  
+}
+
 unsigned int tablahash_nelems(TablaHash tabla) { return tabla->nelems; }
 
 unsigned int tablahash_capacidad(TablaHash tabla) { return tabla->capacidad; }
-
 
 void tablahash_destruir(TablaHash tabla) {
   for (unsigned int i = 0; i < tabla->capacidad; i++) {
@@ -29,6 +38,21 @@ void tablahash_destruir(TablaHash tabla) {
   }
   free(tabla->elems);
   free(tabla);
+}
+
+static void tablahash_redimensionar(TablaHash tabla) {
+  void* elems[tabla->nelems]; unsigned int it = 0;
+  for (unsigned int i = 0; i < tabla->capacidad && it < tabla->nelems; i++) {
+    if (!dato_vacio(tabla->elems[i])) {
+      elems[it] = tabla->elems[i];
+      it++;  
+    }
+  }
+  free(tabla->elems);
+  tabla->capacidad = (tabla->nelems * 100) / FACTOR_CARGA_INI;
+  tabla->elems = malloc(sizeof(*tabla->elems) * tabla->capacidad);
+  assert(tabla->elems);
+  for (it = 0; it < tabla->nelems; it++) tablahash_insertar(tabla, elems[it]);
 }
 
 void tablahash_insertar(TablaHash tabla, void *dato) {
@@ -68,19 +92,4 @@ void tablahash_eliminar(TablaHash tabla, void *dato) {
       tabla->destr(elem);
       tabla->elems[pos] = CENTINELA;
   }
-}
-
-void tablahash_redimensionar(TablaHash tabla) {
-  void* elems[tabla->nelems]; unsigned int it = 0;
-  for (unsigned int i = 0; i < tabla->capacidad && it < tabla->nelems; i++) {
-    if (!dato_vacio(tabla->elems[i])) {
-      elems[it] = tabla->elems[i];
-      it++;  
-    }
-  }
-  free(tabla->elems);
-  tabla->capacidad = (tabla->nelems * 100) / FACTOR_CARGA_INI;
-  tabla->elems = malloc(sizeof(*tabla->elems) * tabla->capacidad);
-  assert(tabla->elems);
-  for (it = 0; it < tabla->nelems; it++) tablahash_insertar(tabla, elems[it]);
 }
