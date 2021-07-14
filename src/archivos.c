@@ -37,7 +37,7 @@ void escribir_cabecera(FILE* fp) {
   fprintf(fp, "nombre,apellido,edad,telefono\n");
 }
 
-void escribir_contacto(FILE* fp, Contacto contacto) {
+void escribir_contacto(Contacto contacto, FILE* fp) {
   fprintf(fp, "%s,%s,%u,%s\n", 
     contacto->nombre, contacto->apellido, contacto->edad, contacto->telefono);
 }

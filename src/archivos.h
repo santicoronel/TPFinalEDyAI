@@ -17,6 +17,6 @@ typedef enum {
 Resultado leer_palabra(FILE* fp, int strlen, char* palabra);
 Resultado leer_numero(FILE* fp, unsigned int* n);
 void escribir_cabecera(FILE* fp);
-void escribir_contacto(FILE* fp, Contacto contacto);
+void escribir_contacto(Contacto contacto, FILE* fp);
 
 #endif /* __ARCHIVOS_H__ */

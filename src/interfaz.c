@@ -164,7 +164,7 @@ static void cargar(TablaHash tabla) {
   char ruta[STRLEN];
   printf("Ingrese ruta de entrada:\n>");
   scanf("%s", ruta);
-  FILE* fp = fopen(ruta, "r");
+  FILE* fp = fopen(ruta, "r"); assert(fp);
   if (!cabecera_valida(fp)) {
     fclose(fp); return;
   }
@@ -214,6 +214,15 @@ static void cargar(TablaHash tabla) {
   fclose(fp);
 }
 
+static void guardar(TablaHash tabla) {
+  char ruta[STRLEN];
+  printf("Ingrese ruta de entrada:\n>");
+  scanf("%s", ruta);
+  FILE* fp = fopen(ruta, "r"); assert(fp);
+  escribir_cabecera(fp);
+  tablahash_recorrer(tabla, escribir_contacto, fp);
+}
+
 void iniciar_interfaz(TablaHash tabla) {
   print_menu();
   int salir = 0;
@@ -239,6 +248,7 @@ void iniciar_interfaz(TablaHash tabla) {
       cargar(tabla);
       break;
     case 6:
+      guardar(tabla);
       break;
     case 7:
       break;
