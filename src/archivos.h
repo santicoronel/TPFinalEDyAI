@@ -12,10 +12,10 @@ typedef enum {
   ERROR_EOF,
   ERROR_LARGO,
   ERROR_FORMATO,
-} Resultado;
+} Lectura;
 
-Resultado leer_palabra(FILE* fp, int strlen, char* palabra);
-Resultado leer_numero(FILE* fp, unsigned int* n);
+Lectura leer_palabra(FILE* fp, int strlen, char* palabra);
+Lectura leer_numero(FILE* fp, unsigned int* n);
 void escribir_cabecera(FILE* fp);
 void escribir_contacto(Contacto contacto, FILE* fp);
 

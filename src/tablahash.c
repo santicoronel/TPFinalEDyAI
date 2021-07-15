@@ -76,16 +76,16 @@ void* tablahash_buscar(TablaHash tabla, void *dato) {
   return tabla->elems[pos];
 }
 
-void tablahash_eliminar(TablaHash tabla, void *dato) {
+void* tablahash_eliminar(TablaHash tabla, void *dato) {
   unsigned int pos = tabla->hash(dato) % tabla->capacidad;
-  int encontrado = 0;
   void* elem;
-  while (!encontrado && (tabla->elems[pos] != NULL)) {
+  while (tabla->elems[pos] != NULL) {
     elem = tabla->elems[pos];
     if ((elem != CENTINELA) && (tabla->comp(elem, dato) == 0))
-      tabla->destr(elem);
+      return elem;
       tabla->elems[pos] = CENTINELA;
   }
+  return NULL;
 }
 
 void tablahash_recorrer(TablaHash tabla, FuncionVisitante visit, void* extra) {

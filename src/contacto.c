@@ -21,7 +21,7 @@ Contacto contacto_destruir(Contacto contacto) {
   free(contacto);
 }
 
-int contacto_coincide(Contacto contacto, char* nombre_apellido[2]) {
+int contacto_coincide(Contacto contacto, const char* nombre_apellido[2]) {
   return (strcmp(contacto->nombre, nombre_apellido[0]) == 0) &&
     (strcmp(contacto->apellido, nombre_apellido[1]) == 0); 
 }

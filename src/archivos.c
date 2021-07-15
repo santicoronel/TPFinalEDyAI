@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-Resultado leer_palabra(FILE* fp, int strlen, char* palabra) { 
+Lectura leer_palabra(FILE* fp, int strlen, char* palabra) { 
   int i, c = fgetc(fp);
   for (i = 0; (i < strlen) && (c != ',') && (c != '\n'); i++) {
     if (c == EOF) return i == 0 ? FINAL : ERROR_EOF; 
@@ -15,7 +15,7 @@ Resultado leer_palabra(FILE* fp, int strlen, char* palabra) {
   return c == ',' ? COMA : SALTO_LINEA; 
 }
 
-Resultado leer_numero(FILE* fp, unsigned int* n) {
+Lectura leer_numero(FILE* fp, unsigned int* n) {
   if (feof(fp)) return ERROR_EOF;
   fscanf(fp, "%u", n);
   char c = fgetc(fp);

@@ -15,7 +15,7 @@ Contacto contacto_crear(char* nombre, char* apellido, unsigned int edad,
 
 Contacto contacto_destruir(Contacto contacto);
 
-int contacto_coincide(Contacto contacto, char* nombre_apellido[2]);
+int contacto_coincide(Contacto contacto, const char* nombre_apellido[2]);
 
 int contacto_comparar_nombre(Contacto contacto1, Contacto contacto2);
 
