@@ -24,16 +24,6 @@ TablaHash tablahash_crear(unsigned int capacidad, FuncionComparadora comp,
   FuncionDestructora destr, FuncionHash hash);
 
 /**
- * Retorna el numero de elementos de la tabla.
- */
-unsigned int tablahash_nelems(TablaHash tabla);
-
-/**
- * Retorna la capacidad de la tabla.
- */
-unsigned int tablahash_capacidad(TablaHash tabla);
-
-/**
  * Destruye la tabla.
  */
 void tablahash_destruir(TablaHash tabla);
