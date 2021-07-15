@@ -11,6 +11,8 @@
 #define STRLEN 50
 
 typedef enum {
+  AGREGAR_EXISTE,
+  EDITAR_EXISTE,
   CARGAR_COMA,
   CARGAR_SALTO_LINEA,
   CARGAR_CABECERA,
@@ -18,10 +20,11 @@ typedef enum {
   CARGAR_EOF,
   CARGAR_LARGO,
   CARGAR_FORMATO,
-} Error;
+} Excepcion;
 
-static void manejar_error(Error error) {
-  switch(error) {
+
+static void manejar_excepcion(Excepcion excepcion) {
+  switch(excepcion) {
   case CARGAR_COMA:
     puts("Coma inesperada, se esperaba un salto de linea");
     break;
@@ -42,6 +45,12 @@ static void manejar_error(Error error) {
       "Deben cargarse nombres, apellidos o telefonos reales");
   case CARGAR_FORMATO:
     puts("Error de formato.");
+    break;
+  case AGREGAR_EXISTE:
+    puts("El contacto ya existe. Pruebe con \'Editar\'");
+    break;
+  case EDITAR_EXISTE:
+    puts("El contacto no existe. Pruebe con \'Agregar\'");
     break;
   default:
     assert(0);
@@ -84,6 +93,11 @@ static void agregar(TablaHash tabla) {
   char* apellido = malloc(sizeof(STRLEN)); assert(apellido);
   printf("Ingrese apellido:\n>");
   fgets(apellido, STRLEN, stdin);
+  char* nombre_apellido[2] = {nombre, apellido};
+  if (tablahash_buscar(tabla, nombre_apellido)){
+    manejar_excepcion(AGREGAR_EXISTE); 
+    return;
+  }
   unsigned int edad;
   printf("Ingrese edad:\n>");
   scanf("%u", &edad);
@@ -92,7 +106,7 @@ static void agregar(TablaHash tabla) {
   fgets(telefono, STRLEN, stdin);
   
   Contacto contacto = contacto_crear(nombre, apellido, edad, telefono);
-  tablahash_insertar(tabla, contacto); 
+  tablahash_insertar(tabla, contacto);
 }
 
 static void eliminar(TablaHash tabla) {
@@ -117,7 +131,7 @@ static void editar(TablaHash tabla) {
     printf("Ingrese nombre:\n>");
     fgets(contacto->telefono, STRLEN, stdin);
   }
-  else puts("No se ha encontrado el contacto");
+  else manejar_excepcion(EDITAR_EXISTE);
 }
 
 static int cabecera_valida(FILE* fp) {
@@ -127,33 +141,33 @@ static int cabecera_valida(FILE* fp) {
     switch (leer_palabra(fp, STRLEN, input)) {
     case COMA:
       if (i == 3) {
-        manejar_error(CARGAR_COMA); return 0;
+        manejar_excepcion(CARGAR_COMA); return 0;
       }
       if ((strcmp(input, keywords[i]) != 0)) {
-        manejar_error(CARGAR_CABECERA); return 0;
+        manejar_excepcion(CARGAR_CABECERA); return 0;
       }
       break;
     case SALTO_LINEA:
       if (i != 3) {
-        manejar_error(CARGAR_SALTO_LINEA); return 0;
+        manejar_excepcion(CARGAR_SALTO_LINEA); return 0;
       }
       if ((strcmp(input, keywords[i]) != 0)) {
-        manejar_error(CARGAR_CABECERA); return 0;
+        manejar_excepcion(CARGAR_CABECERA); return 0;
       }
       break;
     case FINAL:
       if (i == 0) {
-        manejar_error(CARGAR_VACIO); return 0;
+        manejar_excepcion(CARGAR_VACIO); return 0;
       }
       //fallthrough
     case ERROR_EOF:
-      manejar_error(CARGAR_EOF); return 0;
+      manejar_excepcion(CARGAR_EOF); return 0;
       break;
     case ERROR_LARGO:
-      manejar_error(CARGAR_LARGO); return 0;
+      manejar_excepcion(CARGAR_LARGO); return 0;
       break;
     case ERROR_FORMATO:
-      manejar_error(ERROR_FORMATO); return 0;
+      manejar_excepcion(ERROR_FORMATO); return 0;
       break;
     }
   }
@@ -181,11 +195,11 @@ static void cargar(TablaHash tabla) {
       switch(res) {
       case COMA:
         if (i == 3) {
-          manejar_error(CARGAR_COMA); seguir = 0;
+          manejar_excepcion(CARGAR_COMA); seguir = 0;
         }
       case SALTO_LINEA:
         if (i != 3) {
-          manejar_error(CARGAR_SALTO_LINEA); seguir = 0;
+          manejar_excepcion(CARGAR_SALTO_LINEA); seguir = 0;
         }
       case FINAL:
         if (i == 0) {
@@ -193,13 +207,13 @@ static void cargar(TablaHash tabla) {
         }
       // falthrough
       case ERROR_EOF:
-        manejar_error(CARGAR_EOF); seguir = 0;
+        manejar_excepcion(CARGAR_EOF); seguir = 0;
         break;
       case ERROR_LARGO:
-        manejar_error(CARGAR_LARGO); seguir = 0;
+        manejar_excepcion(CARGAR_LARGO); seguir = 0;
         break;
       case ERROR_FORMATO:
-        manejar_error(ERROR_LARGO); seguir = 0;
+        manejar_excepcion(ERROR_LARGO); seguir = 0;
         break;
       }
     }
@@ -230,8 +244,7 @@ void iniciar_interfaz(TablaHash tabla) {
   while(!salir) {
     printf("\nSeleccione una accion:\n>");
     scanf("%d", accion);
-    switch (accion)
-    {
+    switch (accion){
     case 1:
       buscar(tabla);
       break;
