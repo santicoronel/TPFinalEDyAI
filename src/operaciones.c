@@ -13,9 +13,10 @@ Resultado buscar(Entorno entorno) {
   char nombre[STRLEN]; fgets(nombre, STRLEN, stdin);
   printf("Ingrese nombre:\n>");
   char apellido[STRLEN]; fgets(apellido, STRLEN, stdin);
+
   char* nombre_apellido[2] = {nombre, apellido};
   Contacto res = tablahash_buscar(entorno.tabla, nombre_apellido);
-  free(nombre); free(apellido);
+
   if (res) contacto_imprimir(res); 
   else return BUSCAR_EXISTE;
 
@@ -29,6 +30,7 @@ Resultado agregar(Entorno entorno) {
   char* apellido = malloc(sizeof(STRLEN)); assert(apellido);
   printf("Ingrese apellido:\n>");
   fgets(apellido, STRLEN, stdin);
+
   char* nombre_apellido[2] = {nombre, apellido};
   if (tablahash_buscar(entorno.tabla, nombre_apellido))
     return AGREGAR_EXISTE;
@@ -42,6 +44,7 @@ Resultado agregar(Entorno entorno) {
   
   Contacto contacto = contacto_crear(nombre, apellido, edad, telefono);
   tablahash_insertar(entorno.tabla, contacto);
+  historial_hecho(entorno.historial, AGREGAR, contacto);
   
   return EXITO;
 }
@@ -51,9 +54,12 @@ Resultado eliminar(Entorno entorno) {
   char nombre[STRLEN]; fgets(nombre, STRLEN, stdin);
   printf("Ingrese apellido:\n>");
   char apellido[STRLEN]; fgets(apellido, STRLEN, stdin);
+
   char* nombre_apellido[2] = {nombre, apellido};
   Contacto eliminado = tablahash_eliminar(entorno.tabla, nombre_apellido);
-  if (eliminado) { /*TODO: agregar a historial*/ }
+
+  if (eliminado)
+    historial_hecho(entorno.historial, ELIMINAR, eliminado);
   else return ELIMINAR_EXISTE;
 
   return EXITO;
@@ -61,19 +67,31 @@ Resultado eliminar(Entorno entorno) {
 
 Resultado editar(Entorno entorno) {
   printf("Ingrese nombre:\n>");
-  char nombre[STRLEN]; fgets(nombre, STRLEN, stdin);
+  char* nombre = malloc(STRLEN); assert(nombre);
+  fgets(nombre, STRLEN, stdin);
   printf("Ingrese apellido:\n>");
-  char apellido[STRLEN]; fgets(apellido, STRLEN, stdin);
+  char* apellido = malloc(STRLEN); assert(apellido); 
+  fgets(apellido, STRLEN, stdin);
+
   char* nombre_apellido[2] = {nombre, apellido};
   Contacto contacto = tablahash_buscar(entorno.tabla, nombre_apellido);
-  if (contacto) {
-    // TODO: crear contacto nuevo
-    printf("Ingrese edad:\n>");
-    scanf("%u", &contacto->edad);
-    printf("Ingrese nombre:\n>");
-    fgets(contacto->telefono, STRLEN, stdin);
+  if (contacto == NULL) {
+    free(nombre); free(apellido);
+    return EDITAR_EXISTE;
   }
-  else return EDITAR_EXISTE;
+  
+  Contacto contacto_viejo = 
+    contacto_crear(nombre, apellido, contacto->edad, contacto->telefono);
+  int edad;
+  printf("Ingrese edad:\n>");
+  scanf("%u", &edad);
+  contacto->edad = edad;
+  printf("Ingrese telefono:\n>");
+  char* telefono = malloc(STRLEN); assert(telefono);
+  fgets(telefono, STRLEN, stdin);
+  contacto->telefono = telefono;
+  
+  historial_hecho(entorno.historial, EDITAR, contacto_viejo);
 
   return EXITO;
 }
