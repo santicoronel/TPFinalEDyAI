@@ -8,9 +8,9 @@
 typedef struct _Arbol* Arbol;
 
 Arbol arbol_crear(FuncionComparadora comparar);
-void arbol_insertar(Arbol arbol, void* dato);
+void arbol_insertar(void* dato, Arbol arbol);
 void arbol_inorder(Arbol arbol, FuncionVisitante visit, void* extra);
-void destruir(Arbol arbol);
+void arbol_destruir(Arbol arbol);
 
 
 

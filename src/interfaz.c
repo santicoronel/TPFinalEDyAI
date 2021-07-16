@@ -107,6 +107,7 @@ void iniciar_interfaz(TablaHash tabla) {
       or(entorno);
       break;
     case 11:
+      guardar_ordenado(entorno);
       break;
     case 12:
       break;

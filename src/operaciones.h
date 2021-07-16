@@ -27,6 +27,7 @@ typedef enum {
   REHACER_VACIO,
   AND_OR_ATRIBUTOS,
   AND_OR_VACIO,
+  GUARDAR_ORDENADO_ATRUBUTO,
 } Resultado;
 
 Resultado buscar(Entorno entorno);
@@ -39,6 +40,7 @@ Resultado deshacer(Entorno entorno);
 Resultado rehacer(Entorno entorno);
 Resultado and(Entorno entorno);
 Resultado or(Entorno entorno);
+Resultado guardar_ordenado(Entorno entorno);
 
 
 #endif /* __OPERACIONES_H__ */

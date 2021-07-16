@@ -29,7 +29,7 @@ static Nodo nodo_insertar(Nodo nodo, void* dato, FuncionComparadora comp) {
   return nodo_insertar(nodo->der, dato, comp);
 }
 
-void arbol_insertar(Arbol arbol, void* dato) {
+void arbol_insertar(void* dato, Arbol arbol) {
   arbol->raiz = nodo_insertar(arbol->raiz, dato, arbol->comp);
 }
 
@@ -51,7 +51,7 @@ static void nodo_destruir(Nodo nodo) {
   free(nodo);
 }
 
-void destruir(Arbol arbol) {
+void arbol_destruir(Arbol arbol) {
   nodo_destruir(arbol->raiz);
   free(arbol);
 }

@@ -6,6 +6,7 @@
 #include "archivos.h"
 #include "historial.h"
 #include "utils.h"
+#include "arbol.h"
 
 #define STRLEN 50
 
@@ -189,7 +190,7 @@ Resultado guardar(Entorno entorno) {
   char ruta[STRLEN];
   printf("Ingrese ruta de entrada:\n>");
   scanf("%s", ruta);
-  FILE* fp = fopen(ruta, "r"); assert(fp); //TODO: mejor error
+  FILE* fp = fopen(ruta, "w"); assert(fp); //TODO: mejor error
   escribir_cabecera(fp);
   tablahash_recorrer(entorno.tabla, escribir_contacto, fp);
 }
@@ -298,4 +299,34 @@ static void or_contacto(Contacto contacto, Contacto valores) {
 
 Resultado or(Entorno entorno) {
   and_or(entorno, or_contacto);
+}
+
+Resultado guardar_ordenado(Entorno entorno) {
+  char input[STRLEN];
+  printf("Ingrese ruta de salida:\n>");
+  scanf("%s", input);
+  FILE* fp = fopen(input, "w"); assert(fp); //TODO: mejor error
+  printf("Ingrese nombre de atributo:\n>");
+  scanf("%s", input);
+  FuncionComparadora comp;
+  if (strcmp(atributosClave[NOMBRE], input) == 0) 
+    comp = contacto_comparar_nombre;
+  else if (strcmp(atributosClave[APELLIDO], input) == 0) 
+    comp = contacto_comparar_apellido;
+  else if (strcmp(atributosClave[EDAD], input) == 0) 
+    comp = contacto_comparar_edad;
+  else if (strcmp(atributosClave[TELEFONO], input) == 0) 
+    comp = contacto_comparar_telefono;
+  else {
+    fclose(fp); return GUARDAR_ORDENADO_ATRUBUTO;
+  }
+  
+  escribir_cabecera(fp);
+  Arbol arbol_contactos = arbol_crear(comp);
+  tablahash_recorrer(entorno.tabla, arbol_insertar, arbol_contactos);
+  arbol_inorder(arbol_contactos, escribir_contacto, fp);
+  arbol_destruir(arbol_contactos);
+  fclose(fp);
+
+  return EXITO;
 }
