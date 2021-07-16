@@ -14,7 +14,7 @@ static void** top(Pila pila) { return pila->elems + pila->top; }
 Pila pila_crear(int capacidad, FuncionDestructora destr) {
   Pila pila = malloc(sizeof(*pila)); assert(pila);
   void** elems = malloc(sizeof(*elems) * capacidad);
-  *pila = (struct _Pila) {capacidad, elems, -1, destr};
+  *pila = (struct _Pila) {capacidad, elems, capacidad - 1, destr};
   return pila;
 }
 

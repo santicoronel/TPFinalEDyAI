@@ -12,6 +12,12 @@ struct _Historial {
   Pila deshecho;
 };
 
+Operacion operacion_crear(OperacionTag tag, Contacto contacto) {
+  Operacion operacion = malloc(sizeof(*operacion)); assert(operacion);
+  operacion->tag = tag; operacion->contacto = contacto;
+  return operacion;
+}
+
 static void hecho_destruir(Operacion operacion) {
   switch(operacion->tag) {
     case AGREGAR:
@@ -48,16 +54,12 @@ void historial_destruir(Historial historial) {
   pila_destruir(historial->deshecho);
   free(historial);
 } 
-
-void historial_hecho(Historial historial, OperacionTag tag, Contacto contacto) {
-  Operacion operacion = malloc(sizeof(*operacion)); assert(operacion);
-  operacion->contacto = contacto; operacion->tag = tag;
+//TODO: tomar operacion y hacer constructor de operacion.
+void historial_hecho(Historial historial, Operacion operacion) {
   pila_push(historial->hecho, operacion);
 }
 
-void historial_deshecho(Historial historial, OperacionTag tag, Contacto contacto) {
-  Operacion operacion = malloc(sizeof(*operacion)); assert(operacion);
-  operacion->contacto = contacto; operacion->tag = tag;
+void historial_deshecho(Historial historial, Operacion operacion) {
   pila_push(historial->hecho, operacion);
 }
 

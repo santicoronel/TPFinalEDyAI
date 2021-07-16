@@ -95,8 +95,10 @@ void iniciar_interfaz(TablaHash tabla) {
       guardar(entorno);
       break;
     case 7:
+      deshacer(entorno);
       break;
     case 8:
+      rehacer(entorno);
       break;
     case 9:
       break;
@@ -113,6 +115,7 @@ void iniciar_interfaz(TablaHash tabla) {
       printf("\'%d\' no es un numero de accion valido\n");
       break;
     }
+    //TODO: gestionar historial
   }
   entorno_destruir(entorno);
 }

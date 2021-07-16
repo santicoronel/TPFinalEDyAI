@@ -17,13 +17,15 @@ typedef struct {
 }* Operacion;
 
 
+Operacion operacion_crear(OperacionTag tag, Contacto contacto);
+
 Historial historial_crear();
 
 void historial_destruir(Historial historial);
 
-void historial_hecho(Historial historial, OperacionTag tag, Contacto contacto);
+void historial_hecho(Historial historial, Operacion operacion);
 
-void historial_deshecho(Historial historial, OperacionTag tag, Contacto contacto);
+void historial_deshecho(Historial historial, Operacion operacion);
 
 Operacion historial_ultimo_hecho(Historial historial);
 
