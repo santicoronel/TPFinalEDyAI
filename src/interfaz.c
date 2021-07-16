@@ -101,8 +101,10 @@ void iniciar_interfaz(TablaHash tabla) {
       rehacer(entorno);
       break;
     case 9:
+      and(entorno);
       break;
     case 10:
+      or(entorno);
       break;
     case 11:
       break;

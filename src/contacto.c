@@ -54,3 +54,29 @@ void contacto_imprimir(Contacto contacto) {
     contacto->edad, 
     contacto->telefono);
 }
+
+int contacto_and(Contacto contacto1, Contacto contacto2) {
+  if ((contacto2->nombre != NULL) 
+    && (strcmp(contacto1->nombre, contacto2->nombre != 0))) return 0; 
+  if ((contacto2->apellido != NULL) 
+    && (strcmp(contacto1->apellido, contacto2->apellido != 0))) return 0;
+  if ((contacto2->edad != -1) 
+    && (contacto1->edad != contacto2->edad)) return 0; 
+  if ((contacto2->telefono != NULL) 
+    && (strcmp(contacto1->telefono, contacto2->telefono != 0))) return 0; 
+
+  return 1;
+}
+
+int contacto_or(Contacto contacto1, Contacto contacto2) {
+  if ((contacto2->nombre != NULL) 
+    && (strcmp(contacto1->nombre, contacto2->nombre == 0))) return 1; 
+  if ((contacto2->apellido != NULL) 
+    && (strcmp(contacto1->apellido, contacto2->apellido == 0))) return 1;
+  if ((contacto2->edad != -1) 
+    && (contacto1->edad == contacto2->edad)) return 1; 
+  if ((contacto2->telefono == NULL) 
+    && (strcmp(contacto1->telefono, contacto2->telefono == 0))) return 1; 
+    
+  return 0;
+}

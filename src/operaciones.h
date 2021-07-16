@@ -25,6 +25,8 @@ typedef enum {
   CARGAR_FORMATO,
   DESHACER_VACIO,
   REHACER_VACIO,
+  AND_OR_ATRIBUTOS,
+  AND_OR_VACIO,
 } Resultado;
 
 Resultado buscar(Entorno entorno);
@@ -35,6 +37,8 @@ Resultado cargar(Entorno entorno);
 Resultado guardar(Entorno entorno);
 Resultado deshacer(Entorno entorno);
 Resultado rehacer(Entorno entorno);
+Resultado and(Entorno entorno);
+Resultado or(Entorno entorno);
 
 
 #endif /* __OPERACIONES_H__ */
