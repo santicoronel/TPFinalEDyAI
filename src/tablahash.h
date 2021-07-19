@@ -1,19 +1,7 @@
 #ifndef __TABLAHASH_H__
 #define __TABLAHASH_H__
 
-#define FACTOR_CARGA_INI 30
-#define FACTOR_CARGA_MAX 70
-
 #include "tipos.h"
-
-struct _TablaHash {
-  void** elems;
-  unsigned int capacidad;
-  unsigned int nelems;
-  FuncionComparadora comp;
-  FuncionDestructora destr;
-  FuncionHash hash;
-};
 
 typedef struct _TablaHash *TablaHash;
 
@@ -37,12 +25,12 @@ void tablahash_insertar(TablaHash tabla, void *dato);
  * Retorna el dato de la tabla que coincida con el dato dado, o NULL si el dato
  * buscado no se encuentra en la tabla.
  */
-void* tablahash_buscar(TablaHash tabla, void *dato);
+void* tablahash_buscar(TablaHash tabla, void *clave);
 
 /**
  * Elimina el dato de la tabla que coincida con el dato dado.
  */
-void* tablahash_eliminar(TablaHash tabla, void *dato);
+void* tablahash_eliminar(TablaHash tabla, void *clave);
 
 void tablahash_recorrer(TablaHash tabla, FuncionVisitante visit, void* extra);
 

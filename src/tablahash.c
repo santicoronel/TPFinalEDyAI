@@ -3,7 +3,20 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#define FACTOR_CARGA_MAX 0.7
 #define CENTINELA -1
+
+//NICETOHAVE: tomar funcion void* clave(void* dato) y fijarse antes de insertar
+
+struct _TablaHash {
+  void** elems;
+  unsigned int capacidad;
+  unsigned int nelems;
+  double factor_carga;
+  FuncionComparadora comp;
+  FuncionDestructora destr;
+  FuncionHash hash;
+};
 
 static int dato_vacio(void* dato) { 
   return (dato == NULL) || (dato == CENTINELA); 
@@ -11,10 +24,9 @@ static int dato_vacio(void* dato) {
 
 TablaHash tablahash_crear(unsigned int capacidad, FuncionComparadora comp, 
   FuncionDestructora destr, FuncionHash hash) {
-  TablaHash tabla = malloc(sizeof(*tabla));
-  void** elems = malloc(sizeof(*elems) * capacidad);
-  assert(elems);
-  *tabla = (struct _TablaHash) {elems, capacidad, 0, comp, destr, hash};
+  TablaHash tabla = malloc(sizeof(*tabla)); assert(tabla);
+  void** elems = malloc(sizeof(*elems) * capacidad); assert(elems);
+  *tabla = (struct _TablaHash) {elems, capacidad, 0, 0, comp, destr, hash};
   return tabla;  
 }
 
@@ -25,59 +37,61 @@ void tablahash_destruir(TablaHash tabla) {
   free(tabla);
 }
 
-static void tablahash_redimensionar(TablaHash tabla) {
-  void* elems[tabla->nelems]; unsigned int nelems = 0;
-  for (unsigned int i = 0; i < tabla->capacidad; i++)
-    if (!dato_vacio(tabla->elems[i])) elems[nelems++] = tabla->elems[i];
+static unsigned int encontrar(TablaHash tabla, void* clave) {
+  unsigned int pos = tabla->hash(clave) % tabla->capacidad;
+  void* elem = tabla->elems[pos];
+  while (elem) {
+    if ((elem != CENTINELA) && tabla->comp(elem, clave) == 0) return pos;
+    elem = tabla->elems[pos = (pos + 1) % tabla->capacidad];
+  }
+  return -1;
+}
+
+static void redimensionar(TablaHash tabla) {
+  void* elems[tabla->nelems];
+  for (unsigned int i = 0, j = 0; j < tabla->nelems; i++)
+    if (!dato_vacio(tabla->elems[i])) elems[j++] = tabla->elems[i];
   
   free(tabla->elems);
-  tabla->nelems = nelems;
-  tabla->capacidad = (tabla->nelems * 100) / FACTOR_CARGA_INI;
+  tabla->capacidad *= 2; 
   tabla->elems = malloc(sizeof(*tabla->elems) * tabla->capacidad);
   assert(tabla->elems);
 
-  for (unsigned int j = 0; j < nelems; j++) 
+  for (unsigned int j = 0; j < tabla->nelems; j++) 
     tablahash_insertar(tabla, elems[j]);
+  tabla->factor_carga = (double) tabla->capacidad / tabla->nelems;
 }
 
 void tablahash_insertar(TablaHash tabla, void *dato) {
-  if ((tabla->nelems * 100) / tabla->capacidad > FACTOR_CARGA_MAX)
-    tablahash_redimensionar(tabla);
-
   unsigned int pos = tabla->hash(dato) % tabla->capacidad;
   while (!dato_vacio(tabla->elems[pos])) pos = (pos + 1) % tabla->capacidad;
-  if (tabla->elems[pos] == NULL) tabla->nelems++;
+  if (tabla->elems[pos] == NULL) 
+    tabla->factor_carga += 1.0 / tabla->capacidad; 
   tabla->elems[pos] = dato;
+  tabla->nelems++;
+  
+  if (tabla->factor_carga > FACTOR_CARGA_MAX)
+    redimensionar(tabla);
 }
 
-void* tablahash_buscar(TablaHash tabla, void *dato) {
-  unsigned int pos = tabla->hash(dato) % tabla->capacidad;
-  int encontrado = 0;
-  void* elem;
-  while(!encontrado && tabla->elems[pos] != NULL) {
-    elem = tabla->elems[pos];
-    if ((elem != CENTINELA) && tabla->comp(elem, dato) == 0) encontrado = 1;
-    else pos = (pos + 1) % tabla->capacidad;
-  }
+void* tablahash_buscar(TablaHash tabla, void *clave) {
+  unsigned int pos = encontrar(tabla, clave);
+  if (pos == -1) return NULL;
   return tabla->elems[pos];
 }
 
-void* tablahash_eliminar(TablaHash tabla, void *dato) {
-  unsigned int pos = tabla->hash(dato) % tabla->capacidad;
-  void* res = NULL;
-  void* elem = tabla->elems[pos]; 
-  while (!dato_vacio(elem)) {
-    if (tabla->comp(elem, dato) == 0) {
-      res = elem;
-      tabla->elems[pos] = CENTINELA;
-    }
-    pos = (pos + 1) % tabla->capacidad;
-    elem = tabla->elems[pos];
-  }
+void* tablahash_eliminar(TablaHash tabla, void *clave) {
+  unsigned int pos = encontrar(tabla, clave);
+  if (pos == -1) return NULL;
+  void* res = tabla->elems[pos];
+  tabla->elems[pos] = CENTINELA;
+  tabla->nelems--;
   return res;
 }
 
 void tablahash_recorrer(TablaHash tabla, FuncionVisitante visit, void* extra) {
-  for (unsigned int i = 0; i < tabla->capacidad; i++)
-    if (!dato_vacio(tabla->elems[i])) visit(tabla->elems[i], extra);
+  for (unsigned int i = 0, j = 0; j < tabla->elems; i++)
+    if (!dato_vacio(tabla->elems[i])) {
+      visit(tabla->elems[i], extra); j++;
+    }
 }
