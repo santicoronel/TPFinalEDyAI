@@ -67,6 +67,8 @@ static void print_menu() {
     "13. Salir\n");
 }
 
+
+//TODO: manejar resultados
 void iniciar_interfaz(TablaHash tabla) {
   Entorno entorno = entorno_crear(tabla);
   print_menu();

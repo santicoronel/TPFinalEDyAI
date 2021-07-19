@@ -13,28 +13,36 @@ struct _TablaHash {
   unsigned int capacidad;
   unsigned int nelems;
   double factor_carga;
+  FuncionClave clave;
   FuncionComparadora comp;
   FuncionDestructora destr;
   FuncionHash hash;
 };
 
-static int dato_vacio(void* dato) { 
+static int casilla_vacia(void* dato) { 
   return (dato == NULL) || (dato == CENTINELA); 
 }
 
-TablaHash tablahash_crear(unsigned int capacidad, FuncionComparadora comp, 
-  FuncionDestructora destr, FuncionHash hash) {
+TablaHash tablahash_crear(unsigned int capacidad, FuncionClave clave,
+  FuncionComparadora comp, FuncionDestructora destr, FuncionHash hash) {
   TablaHash tabla = malloc(sizeof(*tabla)); assert(tabla);
   void** elems = malloc(sizeof(*elems) * capacidad); assert(elems);
-  *tabla = (struct _TablaHash) {elems, capacidad, 0, 0, comp, destr, hash};
+  *tabla = 
+    (struct _TablaHash) {elems, capacidad, 0, 0, clave, comp, destr, hash};
   return tabla;  
 }
 
 void tablahash_destruir(TablaHash tabla) {
-  for (unsigned int i = 0; i < tabla->capacidad; i++)
-    if (!dato_vacio(tabla->elems[i])) tabla->destr(tabla->elems[i]);
+  for (unsigned int i = 0, j = 0; j < tabla->nelems; i++)
+    if (!casilla_vacia(tabla->elems[i])) {
+      tabla->destr(tabla->elems[i]); j++;
+    }
   free(tabla->elems);
   free(tabla);
+}
+
+void tablahash_nelems(TablaHash tabla) {
+  return tabla->nelems;
 }
 
 static unsigned int encontrar(TablaHash tabla, void* clave) {
@@ -50,7 +58,7 @@ static unsigned int encontrar(TablaHash tabla, void* clave) {
 static void redimensionar(TablaHash tabla) {
   void* elems[tabla->nelems];
   for (unsigned int i = 0, j = 0; j < tabla->nelems; i++)
-    if (!dato_vacio(tabla->elems[i])) elems[j++] = tabla->elems[i];
+    if (!casilla_vacia(tabla->elems[i])) elems[j++] = tabla->elems[i];
   
   free(tabla->elems);
   tabla->capacidad *= 2; 
@@ -62,16 +70,17 @@ static void redimensionar(TablaHash tabla) {
   tabla->factor_carga = (double) tabla->capacidad / tabla->nelems;
 }
 
-void tablahash_insertar(TablaHash tabla, void *dato) {
+int tablahash_insertar(TablaHash tabla, void *dato) {
+  if (encontrar(tabla, tabla->clave(dato) != -1)) return 0;
   unsigned int pos = tabla->hash(dato) % tabla->capacidad;
-  while (!dato_vacio(tabla->elems[pos])) pos = (pos + 1) % tabla->capacidad;
+  while (!casilla_vacia(tabla->elems[pos])) pos = (pos + 1) % tabla->capacidad;
   if (tabla->elems[pos] == NULL) 
     tabla->factor_carga += 1.0 / tabla->capacidad; 
   tabla->elems[pos] = dato;
   tabla->nelems++;
-  
   if (tabla->factor_carga > FACTOR_CARGA_MAX)
     redimensionar(tabla);
+  return 1;
 }
 
 void* tablahash_buscar(TablaHash tabla, void *clave) {
@@ -91,7 +100,7 @@ void* tablahash_eliminar(TablaHash tabla, void *clave) {
 
 void tablahash_recorrer(TablaHash tabla, FuncionVisitante visit, void* extra) {
   for (unsigned int i = 0, j = 0; j < tabla->elems; i++)
-    if (!dato_vacio(tabla->elems[i])) {
+    if (!casilla_vacia(tabla->elems[i])) {
       visit(tabla->elems[i], extra); j++;
     }
 }

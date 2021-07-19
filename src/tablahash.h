@@ -8,18 +8,20 @@ typedef struct _TablaHash *TablaHash;
 /**
  * Crea una nueva tabla hash vacia, con la capacidad dada.
  */
-TablaHash tablahash_crear(unsigned int capacidad, FuncionComparadora comp, 
-  FuncionDestructora destr, FuncionHash hash);
+TablaHash tablahash_crear(unsigned int capacidad, FuncionClave clave,
+  FuncionComparadora comp, FuncionDestructora destr, FuncionHash hash);
 
 /**
  * Destruye la tabla.
  */
 void tablahash_destruir(TablaHash tabla);
 
+void tablahash_nelems(TablaHash tabla);
+
 /**
  * Inserta un dato en la tabla, o lo reemplaza si ya se encontraba.
  */
-void tablahash_insertar(TablaHash tabla, void *dato);
+int tablahash_insertar(TablaHash tabla, void *dato);
 
 /**
  * Retorna el dato de la tabla que coincida con el dato dado, o NULL si el dato

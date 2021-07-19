@@ -10,4 +10,6 @@ typedef unsigned (*FuncionHash)(void* dato);
 /** Retorna un entero sin signo para el dato */
 typedef void (*FuncionVisitante)(void* dato, void* extra);
 
+typedef void* (*FuncionClave)(void* dato);
+
 #endif /* __TIPOS_H__ */

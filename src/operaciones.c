@@ -32,11 +32,6 @@ Resultado agregar(Entorno entorno) {
   char* apellido = malloc(sizeof(STRLEN)); assert(apellido);
   printf("Ingrese %s:\n>", atributosClave[APELLIDO]);
   fgets(apellido, STRLEN, stdin);
-
-  char* nombre_apellido[2] = {nombre, apellido};
-  if (tablahash_buscar(entorno.tabla, nombre_apellido))
-    return AGREGAR_EXISTE;
-
   unsigned int edad;
   printf("Ingrese %s:\n>", atributosClave[EDAD]);
   scanf("%u", &edad);
@@ -45,7 +40,10 @@ Resultado agregar(Entorno entorno) {
   fgets(telefono, STRLEN, stdin);
   
   Contacto contacto = contacto_crear(nombre, apellido, edad, telefono);
-  tablahash_insertar(entorno.tabla, contacto);
+  if (!tablahash_insertar(entorno.tabla, contacto)) {
+    contacto_destruir(contacto); 
+    return AGREGAR_EXISTE;
+  }; 
   historial_hecho(entorno.historial, operacion_crear(AGREGAR, contacto));
   
   return EXITO;
