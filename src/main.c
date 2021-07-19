@@ -10,7 +10,6 @@ static int comparar_contacto(Contacto contacto1, Contacto contacto2) {
 } 
 
 int main() {
-
   TablaHash agenda = tablahash_crear(
     AGENDA_CAPACIDAD, 
     comparar_contacto, 

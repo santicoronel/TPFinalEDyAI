@@ -1,7 +1,6 @@
 #ifndef __OPERACIONES_H__
 #define __OPERACIONES_H__
 
-#include "tipos.h"
 #include "historial.h"
 #include "estructuras/tablahash.h"
 
