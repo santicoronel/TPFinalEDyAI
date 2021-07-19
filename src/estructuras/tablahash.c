@@ -6,7 +6,6 @@
 #define FACTOR_CARGA_MAX 0.7
 #define CENTINELA -1
 
-//NICETOHAVE: tomar funcion void* clave(void* dato) y fijarse antes de insertar
 
 struct _TablaHash {
   void** elems;
