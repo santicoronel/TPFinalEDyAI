@@ -1,5 +1,6 @@
 #include "operaciones.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "contacto.h"
@@ -7,6 +8,7 @@
 #include "historial.h"
 #include "utils.h"
 #include "heap.h"
+#include "pila.h"
 
 #define STRLEN 50
 
@@ -320,12 +322,81 @@ Resultado guardar_ordenado(Entorno entorno) {
   }
   
   escribir_cabecera(fp);
-  Heap contactos_ordenados = heap_crear(tablahash_nelems(entorno.tabla), comp);
-  tablahash_recorrer(entorno.tabla, heap_insertar, contactos_ordenados);
-  while (!heap_vacio(contactos_ordenados)) 
-    escribir_contacto(heap_extraer(contactos_ordenados), fp);
-  heap_destruir(contactos_ordenados);
+  Heap contactosOrdenados = heap_crear(tablahash_nelems(entorno.tabla), comp);
+  tablahash_recorrer(entorno.tabla, heap_insertar, contactosOrdenados);
+  while (!heap_vacio(contactosOrdenados)) 
+    escribir_contacto(heap_extraer(contactosOrdenados), fp);
+  heap_destruir(contactosOrdenados);
   fclose(fp);
 
+  return EXITO;
+}
+
+static int comparar_edad_decr(Contacto contacto1, Contacto contacto2) {
+  return -contacto_comparar_edad(contacto1, contacto2); 
+}
+
+Resultado buscar_suma_edades(Entorno entorno) {
+  unsigned int suma;
+  printf("Ingrese un natural:/n>");
+  scanf("%u", &suma); assert(suma); //TODO: mejor error
+
+  unsigned int ncontactos = tablahash_nelems(entorno.tabla);
+  if (ncontactos == 0) return; //TODO
+
+  Heap contactos = heap_crear(ncontactos, comparar_edad_decr);
+  tablahash_recorrer(entorno.tabla, heap_insertar, contactos);
+  
+  Contacto** mem[2];
+  mem[0] = malloc(sizeof(Contacto*) * (suma + 1)); assert(mem[0]);
+  mem[1] = malloc(sizeof(Contacto*) * (suma + 1)); assert(mem[1]);
+  unsigned int ultimo[2][suma + 1];
+
+  unsigned int sub; Contacto contacto; 
+  for (sub = 1; sub <= suma; sub++) { 
+    ultimo[0][sub] = 0; 
+    contacto = heap_extraer(contactos);
+    if (contacto->edad == sub) {
+      mem[0][sub] = malloc(sizeof(Contacto) * ncontactos);
+      assert(mem[0][sub]); 
+      mem[0][sub][0] = contacto; ultimo[0][sub]++;
+    }
+  }
+  int seguir = 1; unsigned int edad; Contacto* temp;
+  while (seguir && !heap_vacio(contactos)) {
+    if (mem[0][suma]) seguir = 0;
+    contacto = heap_extraer(contactos);
+    for (sub = 1; sub <= suma; sub++) {
+      edad = contacto->edad;
+      if (mem[0][sub]) mem[1][sub] = mem[0][sub];
+      else if (edad == suma) {
+        mem[1][sub] = malloc(sizeof(Contacto*) * ncontactos);
+        assert(mem[1][sub]); 
+        mem[1][sub][0] = contacto; ultimo[0][sub]++;
+      }
+      else if (sub > edad && mem[0][sub - edad]) {
+        mem[1][sub] = malloc(sizeof(Contacto) * ncontactos);
+        assert(mem[1][sub]);
+        for (unsigned int i = 0; i <= ultimo[0][sub - edad]; i++)
+          mem[1][sub][i] = mem[0][sub - edad][i];
+        ultimo[1][sub] = ultimo[1][sub - edad] + 1;
+        mem[1][sub][ultimo[1][sub]] = contacto;
+      }
+      else {
+        mem[1][sub] = NULL; ultimo[1][sub] = 0;
+      }
+    }
+    temp = mem[0];
+    mem[0] = mem[1];
+    mem[1] = temp;
+  }
+  heap_destruir(contactos);
+  if (mem[0][suma] == NULL) return; //TODO
+  for (unsigned int i = 0; i <= ultimo[0][suma]; i++)
+    contacto_imprimir(mem[0][suma][i]); 
+  for (sub = 1; sub <= suma; sub++)
+    free(mem[0][sub]);
+  free(mem[0]); free(mem[1]);
+  
   return EXITO;
 }

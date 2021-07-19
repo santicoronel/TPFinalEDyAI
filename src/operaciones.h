@@ -41,6 +41,7 @@ Resultado rehacer(Entorno entorno);
 Resultado and(Entorno entorno);
 Resultado or(Entorno entorno);
 Resultado guardar_ordenado(Entorno entorno);
+Resultado buscar_suma_edades(Entorno entorno);
 
 
 #endif /* __OPERACIONES_H__ */
