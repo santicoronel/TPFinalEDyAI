@@ -18,32 +18,56 @@ static void entorno_destruir(Entorno entorno) {
 
 static void manejar_resultado(Resultado resultado) {
   switch(resultado) {
+  case EXITO:
+    break;
+  case AGREGAR_EXISTE:
+    puts("Ya existe un contacto con ese nombre.");
+    break;
+  case BUSCAR_EXISTE:
+  case ELIMINAR_EXISTE:
+  case EDITAR_EXISTE:
+    puts("No se ha encontrado el contacto.");
+    break;
   case CARGAR_COMA:
-    puts("Coma inesperada, se esperaba un salto de linea");
+    puts("Coma inesperada, se esperaba un salto de linea.");
     break;
   case CARGAR_SALTO_LINEA:
-    puts("Salto de linea inesperado, se esperaba una coma");
+    puts("Salto de linea inesperado, se esperaba una coma.");
     break;
   case CARGAR_CABECERA:
-    puts("Error de cabecera");
+    puts("No se pudo leer el archivo: error de cabecera.");
     break;
   case CARGAR_VACIO:
-    puts("Archivo vacio");
+    puts("Archivo vacio.");
     break;
   case CARGAR_EOF:
     puts("Final del archivo inesperado.");
     break;
   case CARGAR_LARGO:
     puts("La palabra es demasiado larga. "
-      "Deben cargarse nombres, apellidos o telefonos reales");
+      "Deben cargarse nombres, apellidos o telefonos reales.");
   case CARGAR_FORMATO:
     puts("Error de formato.");
     break;
-  case AGREGAR_EXISTE:
-    puts("El contacto ya existe. Pruebe con \'Editar\'");
+  case DESHACER_VACIO:
+    puts("No hay operaciones para deshacer.");
     break;
-  case EDITAR_EXISTE:
-    puts("El contacto no existe. Pruebe con \'Agregar\'");
+  case REHACER_VACIO:
+    puts("No hay operaciones para rehacer.");
+    break;
+  case AND_OR_ATRIBUTOS:
+    puts("Atributo invalido.");
+    break;
+  case AND_OR_VACIO:
+    puts("Debe haber al menos un valor no vacio.");
+    break;
+  case GUARDAR_ORDENADO_ATRUBUTO:
+    puts("Atributo invalido.");
+    break;
+  case SUMA_EDADES_CERO:
+    puts("El numero debe ser distinto a 0");
+  case SUMA_EDADES_ENCONTRADO:
+    puts("Busqueda infructuosa.");
     break;
   default:
     assert(0);
@@ -67,8 +91,6 @@ static void print_menu() {
     "13. Salir\n");
 }
 
-
-//TODO: manejar resultados
 void iniciar_interfaz(TablaHash tabla) {
   Entorno entorno = entorno_crear(tabla);
   print_menu();
@@ -79,39 +101,40 @@ void iniciar_interfaz(TablaHash tabla) {
     scanf("%d", accion);
     switch (accion){
     case 1:
-      buscar(entorno);
+      manejar_resultado(buscar(entorno));
       break;
     case 2:
-      agregar(entorno);
+      manejar_resultado(agregar(entorno));
       break;
     case 3:
-      eliminar(entorno);
+      manejar_resultado(eliminar(entorno));
       break;
     case 4:
-      editar(entorno);
+      manejar_resultado(editar(entorno));
       break;
     case 5:
-      cargar(entorno);
+      manejar_resultado(cargar(entorno));
       break;
     case 6:
-      guardar(entorno);
+      manejar_resultado(guardar(entorno));
       break;
     case 7:
-      deshacer(entorno);
+      manejar_resultado(deshacer(entorno));
       break;
     case 8:
-      rehacer(entorno);
+      manejar_resultado(rehacer(entorno));
       break;
     case 9:
-      and(entorno);
+      manejar_resultado(and(entorno));
       break;
     case 10:
-      or(entorno);
+      manejar_resultado(or(entorno));
       break;
     case 11:
-      guardar_ordenado(entorno);
+      manejar_resultado(guardar_ordenado(entorno));
       break;
     case 12:
+      manejar_resultado(buscar_suma_edades);
       break;
     case 13:
       salir = 1;
@@ -120,7 +143,8 @@ void iniciar_interfaz(TablaHash tabla) {
       printf("\'%d\' no es un numero de accion valido\n");
       break;
     }
-    //TODO: gestionar historial
+    if (accion != 7 && accion != 8) 
+      historial_vaciar_deshecho(entorno.historial);
   }
   entorno_destruir(entorno);
 }

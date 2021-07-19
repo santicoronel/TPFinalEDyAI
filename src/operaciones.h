@@ -28,6 +28,8 @@ typedef enum {
   AND_OR_ATRIBUTOS,
   AND_OR_VACIO,
   GUARDAR_ORDENADO_ATRUBUTO,
+  SUMA_EDADES_CERO,
+  SUMA_EDADES_ENCONTRADO,
 } Resultado;
 
 Resultado buscar(Entorno entorno);

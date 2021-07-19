@@ -217,6 +217,7 @@ Resultado deshacer(Entorno entorno) {
       historial_deshecho(entorno.historial, operacion);
       break;
     case ELIMINAR:
+      //TODO: chequear si el elemento se inserta; sino, elevar y borrar historial?
       tablahash_insertar(entorno.tabla, operacion->contacto);
       historial_deshecho(entorno.historial, operacion);
       break; 
@@ -243,11 +244,11 @@ Resultado rehacer(Entorno entorno) {
       operacion->contacto->telefono = contacto->telefono;
       contacto->edad = edad;
       contacto->telefono = telefono;
-      historial_deshecho(entorno.historial, operacion);
+      historial_hecho(entorno.historial, operacion);
       break;
     case ELIMINAR:
       tablahash_eliminar(entorno.tabla, operacion->contacto);
-      historial_deshecho(entorno.historial, operacion);
+      historial_hecho(entorno.historial, operacion);
       break; 
   }
   return EXITO;
@@ -339,10 +340,10 @@ static int comparar_edad_decr(Contacto contacto1, Contacto contacto2) {
 Resultado buscar_suma_edades(Entorno entorno) {
   unsigned int suma;
   printf("Ingrese un natural:/n>");
-  scanf("%u", &suma); assert(suma); //TODO: mejor error
+  scanf("%u", &suma); if (suma == 0) return SUMA_EDADES_CERO;
 
   unsigned int ncontactos = tablahash_nelems(entorno.tabla);
-  if (ncontactos == 0) return; //TODO
+  if (ncontactos == 0) return SUMA_EDADES_ENCONTRADO;
 
   Heap contactos = heap_crear(ncontactos, comparar_edad_decr);
   tablahash_recorrer(entorno.tabla, heap_insertar, contactos);
@@ -391,12 +392,14 @@ Resultado buscar_suma_edades(Entorno entorno) {
     mem[1] = temp;
   }
   heap_destruir(contactos);
-  if (mem[0][suma] == NULL) return; //TODO
-  for (unsigned int i = 0; i <= ultimo[0][suma]; i++)
+
+  Resultado res = EXITO;
+  if (mem[0][suma] == NULL) res = SUMA_EDADES_ENCONTRADO;
+  else for (unsigned int i = 0; i <= ultimo[0][suma]; i++)
     contacto_imprimir(mem[0][suma][i]); 
   for (sub = 1; sub <= suma; sub++)
     free(mem[0][sub]);
   free(mem[0]); free(mem[1]);
   
-  return EXITO;
+  return res;
 }

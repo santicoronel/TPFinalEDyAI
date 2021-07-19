@@ -54,7 +54,7 @@ void historial_destruir(Historial historial) {
   pila_destruir(historial->deshecho);
   free(historial);
 } 
-//TODO: tomar operacion y hacer constructor de operacion.
+
 void historial_hecho(Historial historial, Operacion operacion) {
   pila_push(historial->hecho, operacion);
 }
