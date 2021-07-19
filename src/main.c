@@ -1,6 +1,6 @@
 #include "contacto.h"
-#include "tablahash.h"
 #include "interfaz.h"
+#include "estructuras/tablahash.h"
 
 #define AGENDA_CAPACIDAD 100
 

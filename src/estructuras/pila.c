@@ -1,6 +1,7 @@
 #include "pila.h"
 
 #include <stdlib.h>
+#include <assert.h>
 
 struct _Pila {
   int capacidad;

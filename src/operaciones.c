@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "contacto.h"
 #include "archivos.h"
@@ -11,6 +12,9 @@
 #include "estructuras/pila.h"
 
 #define STRLEN 50
+
+char const* const atributosClave[CANT_ATRIBUTOS] = 
+	{ "nombre", "apellido", "edad", "telefono" };
 
 Resultado buscar(Entorno entorno) {
   printf("Ingrese %s:\n>", atributosClave[NOMBRE]);
@@ -214,7 +218,7 @@ Resultado deshacer(Entorno entorno) {
       tablahash_eliminar(entorno.tabla, dummy);
       historial_deshecho(entorno.historial, operacion);
       break;
-    case EDITAR:
+    case EDITAR: {
       Contacto contacto = tablahash_buscar(entorno.tabla, dummy);
       unsigned int edad = operacion->contacto->edad; 
       char* telefono = operacion->contacto->telefono; 
@@ -223,7 +227,7 @@ Resultado deshacer(Entorno entorno) {
       contacto->edad = edad;
       contacto->telefono = telefono;
       historial_deshecho(entorno.historial, operacion);
-      break;
+      break; }
     case ELIMINAR:
       //TODO: chequear si el elemento se inserta; sino, elevar y borrar historial?
       tablahash_insertar(entorno.tabla, operacion->contacto);
@@ -249,7 +253,7 @@ Resultado rehacer(Entorno entorno) {
       tablahash_insertar(entorno.tabla, dummy);
       historial_hecho(entorno.historial, operacion);
       break;
-    case EDITAR:
+    case EDITAR: {
       Contacto contacto = tablahash_buscar(entorno.tabla, dummy);
       unsigned int edad = operacion->contacto->edad; 
       char* telefono = operacion->contacto->telefono; 
@@ -258,7 +262,7 @@ Resultado rehacer(Entorno entorno) {
       contacto->edad = edad;
       contacto->telefono = telefono;
       historial_hecho(entorno.historial, operacion);
-      break;
+      break; }
     case ELIMINAR:
       tablahash_eliminar(entorno.tabla, operacion->contacto);
       historial_hecho(entorno.historial, operacion);

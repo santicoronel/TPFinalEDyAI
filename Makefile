@@ -2,15 +2,15 @@ ESTRDIR = src/estructuras
 ESTRHEAD = $(ESTRDIR)/heap.h $(ESTRDIR)/pila.h $(ESTRDIR)/tablahash.h 
 BUILD_ESTRUCTURAS = build/heap.o build/pila.o build/tablahash.o
 
-CFLAGS = -Wall -Wextra -Werror -std=c99 -g -fno-omit-frame-pointer
+CFLAGS = -w -std=c99 -g -fno-omit-frame-pointer
 
-agenda_interfaz: build/main.o build/contacto.o build/interfaz.o build/operaciones.o build/historial.o build/utils.o $(BUILD_ESTRUCTURAS)
+agenda_interfaz: build/main.o build/contacto.o build/interfaz.o build/operaciones.o build/historial.o build/utils.o build/archivos.o $(BUILD_ESTRUCTURAS)
 	gcc -o $@ $^
 
 clean:
-	rm -rf build/
-	rm -f agenda_interfaz
-	rm -rf tmp/
+	-@rm -rf build/
+	-@rm -f agenda_interfaz
+	-@rm -rf tmp/
 
 .PHONY: clean
 
@@ -25,7 +25,7 @@ build/pila.o: $(ESTRDIR)/pila.c $(ESTRDIR)/pila.c $(ESTRDIR)/tipos.h
 build/tablahash.o: $(ESTRDIR)/tablahash.c $(ESTRDIR)/tablahash.c $(ESTRDIR)/tipos.h
 
 build/%.o: src/%.c
-	mkdir -p build
+	@mkdir -p build
 	gcc $(CFLAGS) -c -o $@ $<
 
 build/%.o: $(ESTRDIR)/%.c

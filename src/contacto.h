@@ -3,15 +3,13 @@
 
 #define CANT_ATRIBUTOS 4
 
+//TODO: tiene sentido?
 typedef enum {
   NOMBRE,
   APELLIDO,
   EDAD,
   TELEFONO,
 } AtributosTag;
-
-char const* const atributosClave[CANT_ATRIBUTOS] = 
-	{ "nombre", "apellido", "edad", "telefono" };
 
 struct _Contacto {
   char* nombre;

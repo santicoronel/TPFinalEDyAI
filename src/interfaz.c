@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include "operaciones.h"
 #include "historial.h"
@@ -134,7 +135,7 @@ void iniciar_interfaz(TablaHash tabla) {
       manejar_resultado(guardar_ordenado(entorno));
       break;
     case 12:
-      manejar_resultado(buscar_suma_edades);
+      manejar_resultado(buscar_suma_edades(entorno));
       break;
     case 13:
       salir = 1;
