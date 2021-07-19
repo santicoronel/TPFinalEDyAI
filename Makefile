@@ -5,13 +5,14 @@ BUILD_ESTRUCTURAS = build/heap.o build/pila.o build/tablahash.o
 CFLAGS = -Wall -Wextra -Werror -std=c99 -g -fno-omit-frame-pointer
 
 agenda_interfaz: build/main.o build/contacto.o build/interfaz.o build/operaciones.o build/historial.o build/utils.o $(BUILD_ESTRUCTURAS)
+	gcc -o $@ $^
 
 clean:
 	rm -rf build/
 	rm -f agenda_interfaz
 	rm -rf tmp/
 
-.PHONY: cleam
+.PHONY: clean
 
 build/main.o: src/main.c src/contacto.h src/interfaz.h $(ESTRDIR)/tablahash.h $(ESTRDIR)/tipos.h
 build/contacto.o: src/contacto.c src/contacto.h src/utils.h
