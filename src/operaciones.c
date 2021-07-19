@@ -14,12 +14,15 @@
 
 Resultado buscar(Entorno entorno) {
   printf("Ingrese %s:\n>", atributosClave[NOMBRE]);
-  char nombre[STRLEN]; fgets(nombre, STRLEN, stdin);
+  char* nombre = malloc(STRLEN); assert(nombre); 
+  fgets(nombre, STRLEN, stdin);
   printf("Ingrese %s:\n>", atributosClave[APELLIDO]);
-  char apellido[STRLEN]; fgets(apellido, STRLEN, stdin);
+  char* apellido = malloc(STRLEN); assert(apellido); 
+  fgets(apellido, STRLEN, stdin);
 
-  char* nombre_apellido[2] = {nombre, apellido};
-  Contacto res = tablahash_buscar(entorno.tabla, nombre_apellido);
+  Contacto dummy = contacto_crear(nombre, apellido, -1, NULL);
+  Contacto res = tablahash_buscar(entorno.tabla, dummy);
+  contacto_destruir(dummy);
 
   if (res) contacto_imprimir(res); 
   else return BUSCAR_EXISTE;
@@ -53,12 +56,15 @@ Resultado agregar(Entorno entorno) {
 
 Resultado eliminar(Entorno entorno) {
   printf("Ingrese %s:\n>", atributosClave[NOMBRE]);
-  char nombre[STRLEN]; fgets(nombre, STRLEN, stdin);
+  char* nombre = malloc(STRLEN); assert(nombre); 
+  fgets(nombre, STRLEN, stdin);
   printf("Ingrese %s:\n>", atributosClave[APELLIDO]);
-  char apellido[STRLEN]; fgets(apellido, STRLEN, stdin);
+  char* apellido = malloc(STRLEN); assert(apellido); 
+  fgets(apellido, STRLEN, stdin);
 
-  char* nombre_apellido[2] = {nombre, apellido};
-  Contacto eliminado = tablahash_eliminar(entorno.tabla, nombre_apellido);
+  Contacto dummy = contacto_crear(nombre, apellido, -1, NULL);
+  Contacto eliminado = tablahash_eliminar(entorno.tabla, dummy);
+  contacto_destruir(dummy);
 
   if (eliminado)
     historial_hecho(entorno.historial, operacion_crear(ELIMINAR, eliminado));
@@ -69,21 +75,21 @@ Resultado eliminar(Entorno entorno) {
 
 Resultado editar(Entorno entorno) {
   printf("Ingrese %s:\n>", atributosClave[NOMBRE]);
-  char* nombre = malloc(STRLEN); assert(nombre);
+  char* nombre = malloc(STRLEN); assert(nombre); 
   fgets(nombre, STRLEN, stdin);
   printf("Ingrese %s:\n>", atributosClave[APELLIDO]);
   char* apellido = malloc(STRLEN); assert(apellido); 
   fgets(apellido, STRLEN, stdin);
 
-  char* nombre_apellido[2] = {nombre, apellido};
-  Contacto contacto = tablahash_buscar(entorno.tabla, nombre_apellido);
+  Contacto dummy = contacto_crear(nombre, apellido, -1, NULL);
+  Contacto contacto = tablahash_buscar(entorno.tabla, dummy);
   if (contacto == NULL) {
-    free(nombre); free(apellido);
+    contacto_destruir(dummy);
     return EDITAR_EXISTE;
   }
 
-  Contacto contacto_viejo = 
-    contacto_crear(nombre, apellido, contacto->edad, contacto->telefono);
+  dummy->edad = contacto->edad;
+  dummy->telefono = contacto->telefono;
   int edad;
   printf("Ingrese %s:\n>", atributosClave[EDAD]);
   scanf("%u", &edad);
@@ -93,7 +99,7 @@ Resultado editar(Entorno entorno) {
   fgets(telefono, STRLEN, stdin);
   contacto->telefono = telefono;
   
-  historial_hecho(entorno.historial, operacion_crear(EDITAR, contacto_viejo));
+  historial_hecho(entorno.historial, operacion_crear(EDITAR, dummy));
 
   return EXITO;
 }
@@ -199,15 +205,17 @@ Resultado deshacer(Entorno entorno) {
   Operacion operacion = historial_ultimo_hecho(entorno.historial);
   if (operacion == NULL) return DESHACER_VACIO;
 
-  char* nombre_apellido[2] = 
-    {operacion->contacto->nombre, operacion->contacto->apellido};
+  Contacto dummy = contacto_crear(
+    operacion->contacto->nombre,
+    operacion->contacto->apellido,
+    -1, NULL);
   switch (operacion->tag) {
     case AGREGAR:
-      tablahash_eliminar(entorno.tabla, nombre_apellido);
+      tablahash_eliminar(entorno.tabla, dummy);
       historial_deshecho(entorno.historial, operacion);
       break;
     case EDITAR:
-      Contacto contacto = tablahash_buscar(entorno.tabla, nombre_apellido);
+      Contacto contacto = tablahash_buscar(entorno.tabla, dummy);
       unsigned int edad = operacion->contacto->edad; 
       char* telefono = operacion->contacto->telefono; 
       operacion->contacto->edad = contacto->edad;
@@ -222,6 +230,9 @@ Resultado deshacer(Entorno entorno) {
       historial_deshecho(entorno.historial, operacion);
       break; 
   }
+  dummy->nombre = NULL; dummy->apellido = NULL;
+  contacto_destruir(dummy);
+
   return EXITO;
 }
 
@@ -229,15 +240,17 @@ Resultado rehacer(Entorno entorno) {
   Operacion operacion = historial_ultimo_deshecho(entorno.historial);
   if (operacion == NULL) return REHACER_VACIO;
 
-  char* nombre_apellido[2] = 
-    {operacion->contacto->nombre, operacion->contacto->apellido};
+  Contacto dummy = contacto_crear(
+    operacion->contacto->nombre,
+    operacion->contacto->apellido,
+    -1, NULL);
   switch (operacion->tag) {
     case AGREGAR:
-      tablahash_insertar(entorno.tabla, nombre_apellido);
+      tablahash_insertar(entorno.tabla, dummy);
       historial_hecho(entorno.historial, operacion);
       break;
     case EDITAR:
-      Contacto contacto = tablahash_buscar(entorno.tabla, nombre_apellido);
+      Contacto contacto = tablahash_buscar(entorno.tabla, dummy);
       unsigned int edad = operacion->contacto->edad; 
       char* telefono = operacion->contacto->telefono; 
       operacion->contacto->edad = contacto->edad;
@@ -251,6 +264,9 @@ Resultado rehacer(Entorno entorno) {
       historial_hecho(entorno.historial, operacion);
       break; 
   }
+  dummy->nombre = NULL; dummy->apellido = NULL;
+  contacto_destruir(dummy);  
+
   return EXITO;
 }
 
