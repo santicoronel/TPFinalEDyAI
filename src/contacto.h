@@ -1,4 +1,4 @@
-#ifndef __CONTACTO_H__
+#ifndef __CONTACTO_H__ 
 #define __CONTACTO_H__
 
 #define CANT_ATRIBUTOS 4

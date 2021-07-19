@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "pila.h"
+#include "estructuras/pila.h"
 
 #define N 20
 

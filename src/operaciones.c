@@ -7,8 +7,8 @@
 #include "archivos.h"
 #include "historial.h"
 #include "utils.h"
-#include "heap.h"
-#include "pila.h"
+#include "estructuras/heap.h"
+#include "estructuras/pila.h"
 
 #define STRLEN 50
 

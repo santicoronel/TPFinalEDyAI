@@ -4,8 +4,8 @@
 #include <stdio.h>
 
 #include "operaciones.h"
-#include "tablahash.h"
 #include "historial.h"
+#include "estructuras/tablahash.h"
 
 static Entorno entorno_crear(TablaHash tabla) {
   Entorno entorno = (Entorno) {tabla, historial_crear()};

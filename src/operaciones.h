@@ -2,8 +2,8 @@
 #define __OPERACIONES_H__
 
 #include "tipos.h"
-#include "tablahash.h"
 #include "historial.h"
+#include "estructuras/tablahash.h"
 
 typedef struct {
   TablaHash tabla;
