@@ -41,7 +41,7 @@ void tablahash_destruir(TablaHash tabla) {
   free(tabla);
 }
 
-void tablahash_nelems(TablaHash tabla) {
+unsigned int tablahash_nelems(TablaHash tabla) {
   return tabla->nelems;
 }
 

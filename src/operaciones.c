@@ -6,7 +6,7 @@
 #include "archivos.h"
 #include "historial.h"
 #include "utils.h"
-#include "arbol.h"
+#include "heap.h"
 
 #define STRLEN 50
 
@@ -320,10 +320,11 @@ Resultado guardar_ordenado(Entorno entorno) {
   }
   
   escribir_cabecera(fp);
-  Arbol arbol_contactos = arbol_crear(comp);
-  tablahash_recorrer(entorno.tabla, arbol_insertar, arbol_contactos);
-  arbol_inorder(arbol_contactos, escribir_contacto, fp);
-  arbol_destruir(arbol_contactos);
+  Heap contactos_ordenados = heap_crear(tablahash_nelems(entorno.tabla), comp);
+  tablahash_recorrer(entorno.tabla, heap_insertar, contactos_ordenados);
+  while (!heap_vacio(contactos_ordenados)) 
+    escribir_contacto(heap_extraer(contactos_ordenados), fp);
+  heap_destruir(contactos_ordenados);
   fclose(fp);
 
   return EXITO;

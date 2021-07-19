@@ -16,7 +16,7 @@ TablaHash tablahash_crear(unsigned int capacidad, FuncionClave clave,
  */
 void tablahash_destruir(TablaHash tabla);
 
-void tablahash_nelems(TablaHash tabla);
+unsigned int tablahash_nelems(TablaHash tabla);
 
 /**
  * Inserta un dato en la tabla, o lo reemplaza si ya se encontraba.
