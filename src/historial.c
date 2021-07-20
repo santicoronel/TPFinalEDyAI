@@ -71,6 +71,10 @@ Operacion historial_ultimo_deshecho(Historial historial) {
   return pila_pop(historial->deshecho);
 }
 
+void historial_vaciar_hecho(Historial historial) {
+  pila_vaciar(historial->hecho);
+}
+
 void historial_vaciar_deshecho(Historial historial) {
   pila_vaciar(historial->deshecho);
 }

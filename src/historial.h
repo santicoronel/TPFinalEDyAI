@@ -31,6 +31,7 @@ Operacion historial_ultimo_hecho(Historial historial);
 
 Operacion historial_ultimo_deshecho(Historial historial);
 
+void historial_vaciar_hecho(Historial historial);
 void historial_vaciar_deshecho(Historial historial);
 
 #endif /* __HISTORIAL_H__ */

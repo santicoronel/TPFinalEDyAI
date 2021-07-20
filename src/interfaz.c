@@ -121,6 +121,7 @@ void iniciar_interfaz(TablaHash tabla) {
       break;
     case 5:
       manejar_resultado(cargar(entorno));
+      historial_vaciar_hecho(entorno.historial);
       break;
     case 6:
       manejar_resultado(guardar(entorno));
