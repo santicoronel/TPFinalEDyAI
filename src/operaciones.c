@@ -284,17 +284,16 @@ Resultado rehacer(Entorno entorno) {
 }
 
 static Resultado and_or(Entorno entorno, FuncionVisitante imprimir_contacto) {
-    char* input[CANT_ATRIBUTOS];
+  char* input[CANT_ATRIBUTOS];
   for (int i = 0; i < CANT_ATRIBUTOS; i++) {
     input[i] = malloc(STRLEN); assert(input[i]);
   }
   unsigned int edad;
   int vacio = 1;
   for (int i = 0; i < CANT_ATRIBUTOS; i++) {
+    printf("Ingrese %s:\n>", atributosClave[i]);
     scanf("%s", input[i]);
-    if (strcmp(atributosClave[i], input[i]) != 0) return AND_OR_ATRIBUTOS;
-    scanf("%s", input[i]);
-    if (strcmp("vacio", input[i]) != 0)  {
+    if (strcmp("vacio", input[i]) == 0)  {
       free(input[i]); input[i] = NULL;
       if (i == EDAD) edad = -1;  
     }

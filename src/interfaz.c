@@ -62,9 +62,6 @@ static void manejar_resultado(Resultado resultado) {
   case REHACER_VACIO:
     puts("No hay operaciones para rehacer.");
     break;
-  case AND_OR_ATRIBUTOS:
-    puts("Atributo invalido.");
-    break;
   case AND_OR_VACIO:
     puts("Debe haber al menos un valor no vacio.");
     break;
