@@ -3,7 +3,7 @@
 
 #define CANT_ATRIBUTOS 4
 
-//TODO: tiene sentido?
+//TODO: tiene
 typedef enum {
   NOMBRE,
   APELLIDO,

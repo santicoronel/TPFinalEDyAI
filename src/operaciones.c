@@ -18,11 +18,11 @@ char const* const atributosClave[CANT_ATRIBUTOS] =
 
 Resultado buscar(Entorno entorno) {
   printf("Ingrese %s:\n>", atributosClave[NOMBRE]);
-  char* nombre = malloc(STRLEN); assert(nombre); 
-  fgets(nombre, STRLEN, stdin);
+  char* nombre = malloc(STRLEN); assert(nombre);
+  input_string(nombre, STRLEN);
   printf("Ingrese %s:\n>", atributosClave[APELLIDO]);
   char* apellido = malloc(STRLEN); assert(apellido); 
-  fgets(apellido, STRLEN, stdin);
+  input_string(apellido, STRLEN);
 
   Contacto dummy = contacto_crear(nombre, apellido, -1, NULL);
   Contacto res = tablahash_buscar(entorno.tabla, dummy);
@@ -37,16 +37,16 @@ Resultado buscar(Entorno entorno) {
 Resultado agregar(Entorno entorno) {
   char* nombre = malloc(sizeof(STRLEN)); assert(nombre);
   printf("Ingrese %s:\n>", atributosClave[NOMBRE]);
-  fgets(nombre, STRLEN, stdin);
+  input_string(nombre, STRLEN);
   char* apellido = malloc(sizeof(STRLEN)); assert(apellido);
   printf("Ingrese %s:\n>", atributosClave[APELLIDO]);
-  fgets(apellido, STRLEN, stdin);
+  input_string(apellido, STRLEN);
   unsigned int edad;
   printf("Ingrese %s:\n>", atributosClave[EDAD]);
-  scanf("%u", &edad);
+  scanf("%u", &edad); getchar();
   char* telefono = malloc(sizeof(STRLEN)); assert(telefono);
   printf("Ingrese %s:\n>", atributosClave[TELEFONO]);
-  fgets(telefono, STRLEN, stdin);
+  input_string(telefono, STRLEN);
   
   Contacto contacto = contacto_crear(nombre, apellido, edad, telefono);
   if (!tablahash_insertar(entorno.tabla, contacto)) {
@@ -61,10 +61,10 @@ Resultado agregar(Entorno entorno) {
 Resultado eliminar(Entorno entorno) {
   printf("Ingrese %s:\n>", atributosClave[NOMBRE]);
   char* nombre = malloc(STRLEN); assert(nombre); 
-  fgets(nombre, STRLEN, stdin);
+  input_string(nombre, STRLEN);
   printf("Ingrese %s:\n>", atributosClave[APELLIDO]);
   char* apellido = malloc(STRLEN); assert(apellido); 
-  fgets(apellido, STRLEN, stdin);
+  input_string(apellido, STRLEN);
 
   Contacto dummy = contacto_crear(nombre, apellido, -1, NULL);
   Contacto eliminado = tablahash_eliminar(entorno.tabla, dummy);
@@ -80,10 +80,10 @@ Resultado eliminar(Entorno entorno) {
 Resultado editar(Entorno entorno) {
   printf("Ingrese %s:\n>", atributosClave[NOMBRE]);
   char* nombre = malloc(STRLEN); assert(nombre); 
-  fgets(nombre, STRLEN, stdin);
+  input_string(nombre, STRLEN);
   printf("Ingrese %s:\n>", atributosClave[APELLIDO]);
   char* apellido = malloc(STRLEN); assert(apellido); 
-  fgets(apellido, STRLEN, stdin);
+  input_string(apellido, STRLEN);
 
   Contacto dummy = contacto_crear(nombre, apellido, -1, NULL);
   Contacto contacto = tablahash_buscar(entorno.tabla, dummy);
@@ -96,11 +96,11 @@ Resultado editar(Entorno entorno) {
   dummy->telefono = contacto->telefono;
   int edad;
   printf("Ingrese %s:\n>", atributosClave[EDAD]);
-  scanf("%u", &edad);
+  scanf("%u", &edad); getchar();
   contacto->edad = edad;
   printf("Ingrese %s:\n>", atributosClave[TELEFONO]);
   char* telefono = malloc(STRLEN); assert(telefono);
-  fgets(telefono, STRLEN, stdin);
+  input_string(telefono, STRLEN);
   contacto->telefono = telefono;
   
   historial_hecho(entorno.historial, operacion_crear(EDITAR, dummy));

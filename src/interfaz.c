@@ -99,7 +99,7 @@ void iniciar_interfaz(TablaHash tabla) {
   int accion;
   while(!salir) {
     printf("\nSeleccione una accion:\n>");
-    scanf("%d", accion);
+    scanf("%d", &accion); getchar();
     switch (accion){
     case 1:
       manejar_resultado(buscar(entorno));

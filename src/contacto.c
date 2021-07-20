@@ -23,11 +23,11 @@ Contacto contacto_destruir(Contacto contacto) {
 }
 
 int contacto_comparar_nombre(Contacto contacto1, Contacto contacto2) {
-  return strcmp(contacto1, contacto2) == 0;
+  return strcmp(contacto1->nombre, contacto2->nombre);
 }
 
 int contacto_comparar_apellido(Contacto contacto1, Contacto contacto2) {
-  return strcmp(contacto1, contacto2) == 0;
+  return strcmp(contacto1->apellido, contacto2->apellido);
 }
 
 int contacto_comparar_edad(Contacto contacto1, Contacto contacto2) {
@@ -36,7 +36,7 @@ int contacto_comparar_edad(Contacto contacto1, Contacto contacto2) {
 }
 
 int contacto_comparar_telefono(Contacto contacto1, Contacto contacto2) {
-  return strcmp(contacto1, contacto2) == 0;
+  return strcmp(contacto1->telefono, contacto2->telefono);
 }
 
 unsigned int contacto_hashear(Contacto contacto) {
@@ -44,7 +44,7 @@ unsigned int contacto_hashear(Contacto contacto) {
 }
 
 void contacto_imprimir(Contacto contacto) {
-  printf("{%s,%s,%u,%s}", 
+  printf("{%s,%s,%u,%s}\n", 
     contacto->nombre, 
     contacto->apellido, 
     contacto->edad, 

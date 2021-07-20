@@ -7,7 +7,8 @@
  */
 unsigned int KRHash(char* s, char* r);
 
-//TODO: implementar
 unsigned int string_to_uint(char* s);
+
+void input_string(char* s, int strlen);
 
 #endif /* __UTILS_H__ */
