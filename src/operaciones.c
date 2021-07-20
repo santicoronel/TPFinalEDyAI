@@ -153,11 +153,11 @@ Resultado cargar(Entorno entorno) {
   unsigned int edad;
   int seguir = 1; Lectura lec; 
   while(seguir) {
-    for (int i = 0; i < CANT_ATRIBUTOS; i++) {
+    for (int i = 0; i < CANT_ATRIBUTOS && seguir; i++) {
       if (i == EDAD) lec = leer_numero(fp, &edad);
       else {
         input[i] = malloc(STRLEN); assert(input);
-        lec = leer_palabra(fp, STRLEN, leer_palabra);
+        lec = leer_palabra(fp, STRLEN, input[i]);
       }
       switch(lec) {
       case COMA:
