@@ -27,17 +27,19 @@ void pila_destruir(Pila pila) {
 
 void pila_push(Pila pila, void* dato) {
   pila->top = (pila->top + 1) % pila->capacidad;
-  if (*top(pila)) pila->destr(pila->elems[pila->top]);
+  if (*top(pila)) pila->destr(*top(pila));
   *top(pila) = dato;
 }
 
 void* pila_pop(Pila pila) {
-  void* res = pila->elems[pila->top];
-  pila->top = (pila->top - 1) % pila->capacidad;
+  void* res = *top(pila);
+  *top(pila) = NULL;
+  pila->top = (pila->top + pila->capacidad - 1) % pila->capacidad;
   return res;
 }
 
 void pila_vaciar(Pila pila) {
-  for(int i = 0; i < pila->capacidad; i++) 
-    if (*top(pila)) pila->destr(*top(pila));
+  while (*top(pila)) {
+    pila->destr(pila_pop(pila)); 
+  }
 }

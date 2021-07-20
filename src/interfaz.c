@@ -153,5 +153,5 @@ void iniciar_interfaz(TablaHash tabla) {
     if (accion != 7 && accion != 8) 
       historial_vaciar_deshecho(entorno.historial);
   }
-  //entorno_destruir(entorno);
+  entorno_destruir(entorno);
 }

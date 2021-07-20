@@ -253,7 +253,7 @@ Resultado rehacer(Entorno entorno) {
     -1, NULL);
   switch (operacion->tag) {
     case AGREGAR:
-      tablahash_insertar(entorno.tabla, dummy);
+      tablahash_insertar(entorno.tabla, operacion->contacto);
       historial_hecho(entorno.historial, operacion);
       break;
     case EDITAR: {
