@@ -23,7 +23,7 @@ void heap_destruir(Heap heap) {
 }
 
 int heap_vacio(Heap heap) {
-  return heap->ultimo;
+  return !heap->ultimo;
 }
 
 int heap_insertar(void* dato, Heap heap) {
@@ -31,8 +31,8 @@ int heap_insertar(void* dato, Heap heap) {
   heap->elems[++heap->ultimo] = dato;
   unsigned int i = heap->ultimo;
   while (i > 1 && heap->comp(dato, heap->elems[i / 2]) < 0) {
-    heap->elems[i] = heap->elems[i /= 2];
-    heap->elems[i] = dato;
+    heap->elems[i] = heap->elems[i / 2];  
+    i /= 2; heap->elems[i] = dato;
   }
   return 1;
 }
