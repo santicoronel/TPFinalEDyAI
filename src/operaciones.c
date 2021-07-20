@@ -188,8 +188,13 @@ Resultado cargar(Entorno entorno) {
       }
     }
     if (seguir) {
-      tablahash_insertar(entorno.tabla, 
+      int insertado = tablahash_insertar(entorno.tabla, 
         contacto_crear(input[NOMBRE], input[APELLIDO], edad, input[TELEFONO]));
+      if (!insertado) {
+        printf("El contacto \"%s %s\" ya existe.\n",
+          input[NOMBRE], input[APELLIDO]);
+        free(input[NOMBRE]); free(input[APELLIDO]); free(input[TELEFONO]);
+      }
       input[NOMBRE] = NULL; input[APELLIDO] = NULL; input[TELEFONO] = NULL;
     }
   }
