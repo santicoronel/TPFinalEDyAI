@@ -13,6 +13,8 @@
 
 #define STRLEN 50
 
+//TODO: ver input de strings
+
 char const* const atributosClave[CANT_ATRIBUTOS] = 
 	{ "nombre", "apellido", "edad", "telefono" };
 
@@ -141,7 +143,8 @@ Resultado cargar(Entorno entorno) {
   char ruta[STRLEN];
   printf("Ingrese ruta de entrada:\n>");
   scanf("%s", ruta);
-  FILE* fp = fopen(ruta, "r"); assert(fp);
+  FILE* fp = fopen(ruta, "r");
+  if (fp == NULL) return ARCHIVO_ENCONTRADO;
   
   Resultado res = cabecera_valida(fp);
   if (res != EXITO) return res;
@@ -200,9 +203,11 @@ Resultado guardar(Entorno entorno) {
   char ruta[STRLEN];
   printf("Ingrese ruta de entrada:\n>");
   scanf("%s", ruta);
-  FILE* fp = fopen(ruta, "w"); assert(fp); //TODO: mejor error
+  FILE* fp = fopen(ruta, "w");
+  if (fp == NULL) return ARCHIVO_ERROR;
   escribir_cabecera(fp);
   tablahash_recorrer(entorno.tabla, escribir_contacto, fp);
+  return EXITO;
 }
 
 Resultado deshacer(Entorno entorno) {
@@ -216,7 +221,6 @@ Resultado deshacer(Entorno entorno) {
   switch (operacion->tag) {
     case AGREGAR:
       tablahash_eliminar(entorno.tabla, dummy);
-      historial_deshecho(entorno.historial, operacion);
       break;
     case EDITAR: {
       Contacto contacto = tablahash_buscar(entorno.tabla, dummy);
@@ -226,14 +230,13 @@ Resultado deshacer(Entorno entorno) {
       operacion->contacto->telefono = contacto->telefono;
       contacto->edad = edad;
       contacto->telefono = telefono;
-      historial_deshecho(entorno.historial, operacion);
       break; }
     case ELIMINAR:
       //TODO: chequear si el elemento se inserta; sino, elevar y borrar historial?
       tablahash_insertar(entorno.tabla, operacion->contacto);
-      historial_deshecho(entorno.historial, operacion);
       break; 
   }
+  historial_deshecho(entorno.historial, operacion);
   dummy->nombre = NULL; dummy->apellido = NULL;
   contacto_destruir(dummy);
 
@@ -326,7 +329,8 @@ Resultado guardar_ordenado(Entorno entorno) {
   char input[STRLEN];
   printf("Ingrese ruta de salida:\n>");
   scanf("%s", input);
-  FILE* fp = fopen(input, "w"); assert(fp); //TODO: mejor error
+  FILE* fp = fopen(input, "w");
+  if (fp == NULL) return ARCHIVO_ERROR;
   printf("Ingrese nombre de atributo:\n>");
   scanf("%s", input);
   FuncionComparadora comp;

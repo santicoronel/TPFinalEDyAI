@@ -29,6 +29,12 @@ static void manejar_resultado(Resultado resultado) {
   case EDITAR_EXISTE:
     puts("No se ha encontrado el contacto.");
     break;
+  case  ARCHIVO_ENCONTRADO:
+    puts("Archivo no encontrado");
+    break;
+  case ARCHIVO_ERROR:
+    puts("Error al abrir el archivo.");
+    break;
   case CARGAR_COMA:
     puts("Coma inesperada, se esperaba un salto de linea.");
     break;
@@ -147,5 +153,5 @@ void iniciar_interfaz(TablaHash tabla) {
     if (accion != 7 && accion != 8) 
       historial_vaciar_deshecho(entorno.historial);
   }
-  entorno_destruir(entorno);
+  //entorno_destruir(entorno);
 }

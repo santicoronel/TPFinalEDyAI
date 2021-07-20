@@ -60,7 +60,7 @@ void historial_hecho(Historial historial, Operacion operacion) {
 }
 
 void historial_deshecho(Historial historial, Operacion operacion) {
-  pila_push(historial->hecho, operacion);
+  pila_push(historial->deshecho, operacion);
 }
 
 Operacion historial_ultimo_hecho(Historial historial) {
