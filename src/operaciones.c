@@ -207,6 +207,7 @@ Resultado guardar(Entorno entorno) {
   if (fp == NULL) return ARCHIVO_ERROR;
   escribir_cabecera(fp);
   tablahash_recorrer(entorno.tabla, escribir_contacto, fp);
+  fclose(fp);
   return EXITO;
 }
 
