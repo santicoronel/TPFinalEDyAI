@@ -362,6 +362,14 @@ Resultado guardar_ordenado(Entorno entorno) {
   return EXITO;
 }
 
+static int sumar_edad(Contacto contacto, int* s) {
+  *s += contacto->edad;
+}
+
+static void imprimir_contacto(Contacto c, void* x __attribute__((unused))) { 
+  contacto_imprimir(c); 
+}
+
 static int comparar_edad_decr(Contacto contacto1, Contacto contacto2) {
   return -contacto_comparar_edad(contacto1, contacto2); 
 }
@@ -373,6 +381,14 @@ Resultado buscar_suma_edades(Entorno entorno) {
 
   unsigned int ncontactos = tablahash_nelems(entorno.tabla);
   if (ncontactos == 0) return SUMA_EDADES_ENCONTRADO;
+
+  int sumaEdades = 0;
+  tablahash_recorrer(entorno.tabla, sumar_edad, &sumaEdades);
+  if (suma > sumaEdades) return SUMA_EDADES_ENCONTRADO;
+  else if (suma == sumaEdades) {
+    tablahash_recorrer(entorno.tabla, contacto_imprimir, NULL);
+    return EXITO;
+  }
 
   Heap contactos = heap_crear(ncontactos, comparar_edad_decr);
   tablahash_recorrer(entorno.tabla, heap_insertar, contactos);
@@ -430,6 +446,6 @@ Resultado buscar_suma_edades(Entorno entorno) {
   for (sub = 1; sub <= suma; sub++)
     free(mem[0][sub]);
   free(mem[0]); free(mem[1]);
-  
+  free(cant[0]); free(cant[1]);
   return res;
 }
