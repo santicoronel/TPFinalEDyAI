@@ -53,6 +53,7 @@ static void manejar_resultado(Resultado resultado) {
   case CARGAR_LARGO:
     puts("La palabra es demasiado larga. "
       "Deben cargarse nombres, apellidos o telefonos reales.");
+    break;
   case CARGAR_FORMATO:
     puts("Error de formato.");
     break;
@@ -146,7 +147,7 @@ void iniciar_interfaz(TablaHash tabla) {
       salir = 1;
       break;
     default:
-      printf("\'%d\' no es un numero de accion valido\n");
+      printf("\'%d\' no es un numero de accion valido\n", accion);
       break;
     }
     if (accion != 7 && accion != 8) 

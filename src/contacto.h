@@ -23,7 +23,7 @@ typedef struct _Contacto* Contacto;
 Contacto contacto_crear(char* nombre, char* apellido, unsigned int edad, 
   char* telefono);
 
-Contacto contacto_destruir(Contacto contacto);
+void contacto_destruir(Contacto contacto);
 
 int contacto_comparar_nombre(Contacto contacto1, Contacto contacto2);
 

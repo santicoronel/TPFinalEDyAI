@@ -1,6 +1,7 @@
 #include "utils.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
 unsigned int KRHash(char* s, char* r) {
   unsigned int hashval = 0;

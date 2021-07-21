@@ -171,11 +171,9 @@ Resultado cargar(Entorno entorno) {
         }
         break;
       case FINAL:
-        if (i == 0) {
-          res = EXITO; seguir = 0; 
-          break;
-        }
-      // falthrough
+        res = i == 0 ? EXITO : CARGAR_EOF;
+        seguir = 0;
+        break;
       case ERROR_EOF:
         res = CARGAR_EOF; seguir = 0;
         break;
@@ -204,6 +202,10 @@ Resultado cargar(Entorno entorno) {
   return res;
 }
 
+static void escribir_contacto_general(void* contacto, void* fp) {
+  escribir_contacto(contacto, fp);
+}
+
 Resultado guardar(Entorno entorno) {
   char ruta[STRLEN];
   printf("Ingrese ruta de entrada:\n>");
@@ -211,7 +213,7 @@ Resultado guardar(Entorno entorno) {
   FILE* fp = fopen(ruta, "w");
   if (fp == NULL) return ARCHIVO_ERROR;
   escribir_cabecera(fp);
-  tablahash_recorrer(entorno.tabla, escribir_contacto, fp);
+  tablahash_recorrer(entorno.tabla, escribir_contacto_general, fp);
   fclose(fp);
   return EXITO;
 }
@@ -314,20 +316,36 @@ static Resultado and_or(Entorno entorno, FuncionVisitante imprimir_contacto) {
   return EXITO;
 } 
 
-static void and_contacto(Contacto contacto, Contacto valores) {
+static void and_contacto(void* contacto, void* valores) {
   if (contacto_and(contacto, valores)) contacto_imprimir(contacto);
 }
 
 Resultado and(Entorno entorno) {
-  and_or(entorno, and_contacto);
+  return and_or(entorno, and_contacto);
 }
 
-static void or_contacto(Contacto contacto, Contacto valores) {
+static void or_contacto(void* contacto, void* valores) {
   if (contacto_or(contacto, valores)) contacto_imprimir(contacto);
 }
 
 Resultado or(Entorno entorno) {
-  and_or(entorno, or_contacto);
+  return and_or(entorno, or_contacto);
+}
+
+static int comparar_nombre(void* contacto1, void* contacto2) {
+  return contacto_comparar_nombre(contacto1, contacto2);
+}
+static int comparar_apellido(void* contacto1, void* contacto2) {
+  return contacto_comparar_apellido(contacto1, contacto2);
+}
+static int comparar_edad(void* contacto1, void* contacto2) {
+  return contacto_comparar_edad(contacto1, contacto2);
+}
+static int comparar_telefono(void* contacto1, void* contacto2) {
+  return contacto_comparar_telefono(contacto1, contacto2);
+}
+static void insertar_heap(void* contacto, void* heap) {
+  heap_insertar(contacto, heap);
 }
 
 Resultado guardar_ordenado(Entorno entorno) {
@@ -340,20 +358,20 @@ Resultado guardar_ordenado(Entorno entorno) {
   scanf("%s", input);
   FuncionComparadora comp;
   if (strcmp(atributosClave[NOMBRE], input) == 0) 
-    comp = contacto_comparar_nombre;
+    comp = comparar_nombre;
   else if (strcmp(atributosClave[APELLIDO], input) == 0) 
-    comp = contacto_comparar_apellido;
+    comp = comparar_apellido;
   else if (strcmp(atributosClave[EDAD], input) == 0) 
-    comp = contacto_comparar_edad;
+    comp = comparar_edad;
   else if (strcmp(atributosClave[TELEFONO], input) == 0) 
-    comp = contacto_comparar_telefono;
+    comp = comparar_telefono;
   else {
     fclose(fp); return GUARDAR_ORDENADO_ATRUBUTO;
   }
   
   escribir_cabecera(fp);
   Heap contactosOrdenados = heap_crear(tablahash_nelems(entorno.tabla), comp);
-  tablahash_recorrer(entorno.tabla, heap_insertar, contactosOrdenados);
+  tablahash_recorrer(entorno.tabla, insertar_heap, contactosOrdenados);
   while (!heap_vacio(contactosOrdenados)) 
     escribir_contacto(heap_extraer(contactosOrdenados), fp);
   heap_destruir(contactosOrdenados);
@@ -362,15 +380,13 @@ Resultado guardar_ordenado(Entorno entorno) {
   return EXITO;
 }
 
-static int sumar_edad(Contacto contacto, int* s) {
-  *s += contacto->edad;
+static void sumar_edad(void* contacto, void* s) {
+  *(int*)s += ((Contacto)contacto)->edad;
 }
-
-static void imprimir_contacto(Contacto c, void* x __attribute__((unused))) { 
+static void imprimir_contacto(void* c, void* x __attribute__((unused))) { 
   contacto_imprimir(c); 
 }
-
-static int comparar_edad_decr(Contacto contacto1, Contacto contacto2) {
+static int comparar_edad_decr(void* contacto1, void* contacto2) {
   return -contacto_comparar_edad(contacto1, contacto2); 
 }
 
@@ -382,16 +398,16 @@ Resultado buscar_suma_edades(Entorno entorno) {
   unsigned int ncontactos = tablahash_nelems(entorno.tabla);
   if (ncontactos == 0) return SUMA_EDADES_ENCONTRADO;
 
-  int sumaEdades = 0;
+  unsigned int sumaEdades = 0;
   tablahash_recorrer(entorno.tabla, sumar_edad, &sumaEdades);
   if (suma > sumaEdades) return SUMA_EDADES_ENCONTRADO;
   else if (suma == sumaEdades) {
-    tablahash_recorrer(entorno.tabla, contacto_imprimir, NULL);
+    tablahash_recorrer(entorno.tabla, imprimir_contacto, NULL);
     return EXITO;
   }
 
   Heap contactos = heap_crear(ncontactos, comparar_edad_decr);
-  tablahash_recorrer(entorno.tabla, heap_insertar, contactos);
+  tablahash_recorrer(entorno.tabla, insertar_heap, contactos);
   
   Contacto** mem[2];
   mem[0] = malloc(sizeof(Contacto*) * (suma + 1)); assert(mem[0]);

@@ -18,23 +18,24 @@ Operacion operacion_crear(OperacionTag tag, Contacto contacto) {
   return operacion;
 }
 
-static void hecho_destruir(Operacion operacion) {
-  switch(operacion->tag) {
+static void hecho_destruir(void* operacion) {
+  switch(((Operacion)operacion)->tag) {
     case AGREGAR:
       break;
     case EDITAR:
     case ELIMINAR:
-      contacto_destruir(operacion->contacto);
+      contacto_destruir(((Operacion)operacion)->contacto);
       break;
   }
   free(operacion);
 }
 
-static void deshecho_destruir(Operacion operacion) {
-  switch(operacion->tag) {
+static void deshecho_destruir(void* operacion) {
+  operacion = (Operacion)operacion;
+  switch(((Operacion)operacion)->tag) {
     case AGREGAR:
     case EDITAR:
-      contacto_destruir(operacion->contacto);
+      contacto_destruir(((Operacion)operacion)->contacto);
       break;
     case ELIMINAR:
       break;

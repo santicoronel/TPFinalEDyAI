@@ -4,7 +4,7 @@
 #include <assert.h>
 
 #define FACTOR_CARGA_MAX 0.7
-#define CENTINELA -1
+#define CENTINELA ((void*)-1)
 
 
 struct _TablaHash {
@@ -76,7 +76,7 @@ static void redimensionar(TablaHash tabla) {
 }
 
 int tablahash_insertar(TablaHash tabla, void *dato) {
-  if (encontrar(tabla, dato) != -1) return 0;
+  if (encontrar(tabla, dato) != (unsigned)-1) return 0;
   insertar_elem(tabla, dato);
   tabla->nelems++;
   if (tabla->factor_carga > FACTOR_CARGA_MAX)
@@ -86,13 +86,13 @@ int tablahash_insertar(TablaHash tabla, void *dato) {
 
 void* tablahash_buscar(TablaHash tabla, void *dato) {
   unsigned int pos = encontrar(tabla, dato);
-  if (pos == -1) return NULL;
+  if (pos == (unsigned)-1) return NULL;
   return tabla->elems[pos];
 }
 
 void* tablahash_eliminar(TablaHash tabla, void *dato) {
   unsigned int pos = encontrar(tabla, dato);
-  if (pos == -1) return NULL;
+  if (pos == (unsigned)-1) return NULL;
   void* res = tabla->elems[pos];
   tabla->elems[pos] = CENTINELA;
   tabla->nelems--;
