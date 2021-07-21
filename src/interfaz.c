@@ -69,7 +69,8 @@ static void manejar_resultado(Resultado resultado) {
     puts("Atributo invalido.");
     break;
   case SUMA_EDADES_CERO:
-    puts("El numero debe ser distinto a 0");
+    puts("El numero debe ser distinto a 0.");
+    break;
   case SUMA_EDADES_ENCONTRADO:
     puts("Busqueda infructuosa.");
     break;
