@@ -24,9 +24,8 @@ static int casilla_vacia(void* dato) {
 TablaHash tablahash_crear(unsigned int capacidad, FuncionComparadora comp, 
   FuncionDestructora destr, FuncionHash hash) {
   TablaHash tabla = malloc(sizeof(*tabla)); assert(tabla);
-  void** elems = malloc(sizeof(*elems) * capacidad); assert(elems);
-  *tabla = 
-    (struct _TablaHash) {elems, capacidad, 0, 0, comp, destr, hash};
+  void** elems = calloc(capacidad, sizeof(*elems)); assert(elems);
+  *tabla = (struct _TablaHash) {elems, capacidad, 0, 0, comp, destr, hash};
   return tabla;  
 }
 
@@ -68,7 +67,7 @@ static void redimensionar(TablaHash tabla) {
   
   free(tabla->elems);
   tabla->capacidad *= 2; 
-  tabla->elems = malloc(sizeof(*tabla->elems) * tabla->capacidad);
+  tabla->elems = calloc(tabla->capacidad, sizeof(*tabla->elems));
   assert(tabla->elems);
 
   for (unsigned int j = 0; j < tabla->nelems; j++) 

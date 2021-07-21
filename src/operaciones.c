@@ -399,11 +399,10 @@ Resultado buscar_suma_edades(Entorno entorno) {
   unsigned int* cant[2];
   cant[0] = malloc(sizeof(int)* (suma + 1)); assert(cant[0]);
   cant[1] = malloc(sizeof(int)* (suma + 1)); assert(cant[0]);
+  memset(mem[0], 0, (suma + 1) * sizeof(Contacto*)); 
+  memset(cant[0], 0, (suma + 1) * sizeof(int));
 
-  unsigned int sub; 
-  for (sub = 1; sub <= suma; sub++) {
-    mem[0][sub] = NULL; cant[0][sub] = 0;
-  }
+  unsigned int sub;
   Contacto contacto;
   void* temp;
   int seguir = 1; unsigned int edad;
@@ -424,8 +423,8 @@ Resultado buscar_suma_edades(Entorno entorno) {
       else if (sub > edad && mem[0][sub - edad]) {
         mem[1][sub] = malloc(sizeof(Contacto) * ncontactos);
         assert(mem[1][sub]);
-        for (unsigned int i = 0; i < cant[0][sub - edad]; i++)
-          mem[1][sub][i] = mem[0][sub - edad][i];
+        memcpy(mem[1][sub], mem[0][sub - edad], 
+          cant[0][sub - edad] * sizeof(Contacto));
         mem[1][sub][cant[0][sub - edad]] = contacto;
         cant[1][sub] = cant[0][sub - edad] + 1;
       }
