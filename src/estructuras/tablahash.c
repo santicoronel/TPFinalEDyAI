@@ -73,7 +73,7 @@ static void redimensionar(TablaHash tabla) {
 
   for (unsigned int j = 0; j < tabla->nelems; j++) 
     insertar_elem(tabla, elems[j]);
-  tabla->factor_carga = (double) tabla->capacidad / tabla->nelems;
+  tabla->factor_carga = (double) tabla->nelems / tabla->capacidad;
 }
 
 int tablahash_insertar(TablaHash tabla, void *dato) {
