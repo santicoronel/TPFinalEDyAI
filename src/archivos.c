@@ -6,6 +6,7 @@
 Lectura leer_palabra(FILE* fp, int strlen, char* palabra) { 
   int i, c = fgetc(fp);
   for (i = 0; (i < strlen) && (c != ',') && (c != '\n'); i++) {
+    // Llegamos al final del archivo; si no es una linea vacia elevamos error.
     if (c == EOF) return i == 0 ? FINAL : ERROR_EOF; 
     palabra[i] = c;
     c = fgetc(fp);
