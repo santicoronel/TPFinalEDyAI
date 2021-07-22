@@ -8,15 +8,23 @@
 #include "historial.h"
 #include "estructuras/tablahash.h"
 
-static Entorno entorno_crear(TablaHash tabla) {
-  Entorno entorno = (Entorno) {tabla, historial_crear()};
+/** 
+ * Crea entorno para trabajar sobre la agenda
+ * y llevar registro de las operaciones hechas y deshechas.
+ */
+static Entorno entorno_crear(TablaHash agenda) {
+  Entorno entorno = (Entorno) {agenda, historial_crear()};
   return entorno;
 }
-
+/** Destruye los datos pertinentes a la sesion con el usuario. */
 static void entorno_destruir(Entorno entorno) {
   historial_destruir(entorno.historial);
 }
 
+/**
+ * Interpreta el resultado devuelto por las operaciones realizadas
+ * e informa al usuario si corresponde.
+ */
 static void manejar_resultado(Resultado resultado) {
   switch(resultado) {
   case EXITO:
@@ -79,7 +87,7 @@ static void manejar_resultado(Resultado resultado) {
     assert(0);
   }
 }
-
+/** Imprime el menu de opciones en pantalla */
 static void print_menu() {
   printf("Menu de acciones:\n"
     "1. Buscar\n"
@@ -97,8 +105,8 @@ static void print_menu() {
     "13. Salir\n");
 }
 
-void iniciar_interfaz(TablaHash tabla) {
-  Entorno entorno = entorno_crear(tabla);
+void iniciar_interfaz(TablaHash agenda) {
+  Entorno entorno = entorno_crear(agenda);
   print_menu();
   int salir = 0;
   int accion;
@@ -120,6 +128,7 @@ void iniciar_interfaz(TablaHash tabla) {
       break;
     case 5:
       manejar_resultado(cargar(entorno));
+      // Cuando cargamos deshechamos el historial.
       historial_vaciar_hecho(entorno.historial);
       break;
     case 6:
@@ -150,6 +159,8 @@ void iniciar_interfaz(TablaHash tabla) {
       printf("\'%d\' no es un numero de accion valido\n", accion);
       break;
     }
+    // Si la operacion no utiliza el historial, 
+    // vaciamos las operaciones deshechas.
     if (accion != 7 && accion != 8) 
       historial_vaciar_deshecho(entorno.historial);
   }
