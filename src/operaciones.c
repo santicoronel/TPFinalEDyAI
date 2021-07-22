@@ -193,6 +193,7 @@ Resultado cargar(Entorno entorno) {
           input[NOMBRE], input[APELLIDO]);
         free(input[NOMBRE]); free(input[APELLIDO]); free(input[TELEFONO]);
       }
+      else printf("Contacto \"%s %s\" agregado.\n", input[NOMBRE], input[APELLIDO]);
       input[NOMBRE] = NULL; input[APELLIDO] = NULL; input[TELEFONO] = NULL;
     }
   }
@@ -240,7 +241,6 @@ Resultado deshacer(Entorno entorno) {
       contacto->telefono = telefono;
       break; }
     case ELIMINAR:
-      //TODO: chequear si el elemento se inserta; sino, elevar y borrar historial?
       tablahash_insertar(entorno.tabla, operacion->contacto);
       break; 
   }

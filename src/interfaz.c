@@ -30,16 +30,16 @@ static void manejar_resultado(Resultado resultado) {
     puts("No se ha encontrado el contacto.");
     break;
   case  ARCHIVO_ENCONTRADO:
-    puts("Archivo no encontrado");
+    puts("Archivo no encontrado.");
     break;
   case ARCHIVO_ERROR:
     puts("Error al abrir el archivo.");
     break;
   case CARGAR_COMA:
-    puts("Coma inesperada, se esperaba un salto de linea.");
+    puts("El proceso se interrumpio por una coma inesperada.");
     break;
   case CARGAR_SALTO_LINEA:
-    puts("Salto de linea inesperado, se esperaba una coma.");
+    puts("El proceso se interrumpio por un salto de linea inesperado.");
     break;
   case CARGAR_CABECERA:
     puts("No se pudo leer el archivo: error de cabecera.");
@@ -48,7 +48,7 @@ static void manejar_resultado(Resultado resultado) {
     puts("Archivo vacio.");
     break;
   case CARGAR_EOF:
-    puts("Final del archivo inesperado.");
+    puts("El proceso se interrumpio por un final de archivo inesperado.");
     break;
   case CARGAR_LARGO:
     puts("La palabra es demasiado larga. "
