@@ -1,3 +1,5 @@
+/** Biblioteca de funciones auxiliares. */ 
+
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
@@ -6,9 +8,13 @@
  * Programming Language (Second Ed.)".
  */
 unsigned int KRHash(char* s, char* r);
-
+/**
+ * Funcion que toma un string y lo transforma a un entero no negativo.
+ */
 unsigned int string_to_uint(char* s);
-
-void input_string(char* s, int strlen);
+/**
+ * Pide por entrada estandar el valor dado y retorna el string ingresado.
+ */
+char* ingresar_string(const char* valor, int strlen);
 
 #endif /* __UTILS_H__ */
