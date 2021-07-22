@@ -1,4 +1,4 @@
-/** Implementa una cola de prioridad. */
+/** Implementa una cola de prioridad general. */
 
 #ifndef __HEAP_H__
 #define __HEAP_H__

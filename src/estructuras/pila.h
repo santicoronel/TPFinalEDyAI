@@ -1,4 +1,4 @@
-/** Implementa una pila. */
+/** Implementa una pila general. */
 
 #ifndef __PILA_H__
 #define __PILA_H__

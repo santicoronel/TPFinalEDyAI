@@ -24,7 +24,7 @@ Pila pila_crear(int capacidad, FuncionDestructora destr) {
   Pila pila = malloc(sizeof(*pila)); assert(pila);
   void** elems = calloc(capacidad, sizeof(*elems));
   // El ultimo es la posicion anterior a la inicial, modulo la capacidad.
-  *pila = (struct _Pila) {capacidad, elems, capacidad - 1, destr};
+  *pila = (struct _Pila) {elems, capacidad, capacidad - 1, destr};
   return pila;
 }
 
