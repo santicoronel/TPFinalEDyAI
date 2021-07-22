@@ -1,6 +1,7 @@
 #include "contacto.h"
 #include "interfaz.h"
 #include "estructuras/tablahash.h"
+#include "utils.h"
 
 #define AGENDA_CAPACIDAD 100
 
@@ -14,7 +15,7 @@ static void destruir_contacto(void* contacto) {
 }
 
 static unsigned int hashear_contacto(void* contacto) {
-  return contacto_hashear((Contacto) contacto);
+  return KRHash(((Contacto)contacto)->nombre, ((Contacto)contacto)->apellido);
 }
 
 int main() {

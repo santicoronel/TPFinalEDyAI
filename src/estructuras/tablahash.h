@@ -39,4 +39,4 @@ void* tablahash_eliminar(TablaHash tabla, void *dato);
  */
 void tablahash_recorrer(TablaHash tabla, FuncionVisitante visit, void* extra);
 
-#endif /* __TABLA_HASH__ */
+#endif /** __TABLA_HASH__ */

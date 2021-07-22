@@ -13,4 +13,4 @@ typedef unsigned (*FuncionHash)(void* dato);
 /** Visita el elemento, utilizando un dato extra en la llamada */
 typedef void (*FuncionVisitante)(void* dato, void* extra);
 
-#endif /* __TIPOS_H__ */
+#endif /** __TIPOS_H__ */

@@ -13,7 +13,7 @@ Contacto contacto_crear(char* nombre, char* apellido, unsigned int edad,
   assert(contacto);
   *contacto = (struct _Contacto) {nombre, apellido, edad, telefono};
   return contacto;
-  }
+}
 
 void contacto_destruir(Contacto contacto) {
   free(contacto->nombre);
@@ -37,10 +37,6 @@ int contacto_comparar_edad(Contacto contacto1, Contacto contacto2) {
 
 int contacto_comparar_telefono(Contacto contacto1, Contacto contacto2) {
   return strcmp(contacto1->telefono, contacto2->telefono);
-}
-
-unsigned int contacto_hashear(Contacto contacto) {
-  return KRHash(contacto->nombre, contacto->apellido);
 }
 
 void contacto_imprimir(Contacto contacto) {
