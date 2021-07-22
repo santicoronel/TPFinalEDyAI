@@ -1,3 +1,5 @@
+/** Implementa historial de operaciones utilizando dos pilas estaticas. */
+
 #include "historial.h"
 
 #include <stdlib.h>
@@ -5,8 +7,12 @@
 
 #include "estructuras/pila.h"
 
-#define N 20
+#define CAPACIDAD 20 // Capacidad del historial.
 
+/** 
+ * Estructura del historial. 
+ * Tenemos una pila para las operaciones realizadas y una para las deshechas.
+ */
 struct _Historial {
   Pila hecho;
   Pila deshecho;
@@ -17,10 +23,13 @@ Operacion operacion_crear(OperacionTag tag, Contacto contacto) {
   operacion->tag = tag; operacion->contacto = contacto;
   return operacion;
 }
-
+/**
+ * Destruye el registro de la operacion realizada sin perjudicar la integridad
+ * de los datos.
+ */
 static void hecho_destruir(void* operacion) {
   switch(((Operacion)operacion)->tag) {
-    case AGREGAR:
+    case AGREGAR: // Si el contacto fue agregado a la tabla, no lo destruimos.
       break;
     case EDITAR:
     case ELIMINAR:
@@ -29,7 +38,10 @@ static void hecho_destruir(void* operacion) {
   }
   free(operacion);
 }
-
+/**
+ * Destruye el registro de la operacion deshecha sin perjudicar la integridad
+ * de los datos.
+ */
 static void deshecho_destruir(void* operacion) {
   operacion = (Operacion)operacion;
   switch(((Operacion)operacion)->tag) {
@@ -37,7 +49,7 @@ static void deshecho_destruir(void* operacion) {
     case EDITAR:
       contacto_destruir(((Operacion)operacion)->contacto);
       break;
-    case ELIMINAR:
+    case ELIMINAR: // Si el contacto fue agregado nuevamente, no lo destruimos.
       break;
   }
   free(operacion);
@@ -45,8 +57,8 @@ static void deshecho_destruir(void* operacion) {
 
 Historial historial_crear() {
   Historial historial = malloc(sizeof(*historial)); assert(historial);
-  historial->hecho = pila_crear(N, hecho_destruir);
-  historial->deshecho = pila_crear(N, deshecho_destruir);
+  historial->hecho = pila_crear(CAPACIDAD, hecho_destruir);
+  historial->deshecho = pila_crear(CAPACIDAD, deshecho_destruir);
   return historial;
 }
 
