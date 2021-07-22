@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 unsigned int KRHash(char* s, char* r) {
   unsigned int hashval = 0;
@@ -14,9 +15,12 @@ unsigned int string_to_uint(char* s) {
   return strtoul(s, NULL, 0);
 }
 
-void input_string(char* s, int strlen) {
+char* ingresar_string(const char* valor, int strlen) {
+  printf("Ingrese %s:\n>", valor); fflush(stdout);
+  char* s = malloc(strlen); assert(s);
   int c, i;
   for (i = 0; i < strlen - 1 && ((c = getchar()) != '\n'); i++) s[i] = c; 
-  while (c != '\n') c = getchar();
   s[i] = '\0';
+  while (c != '\n') c = getchar(); //vacia el buffer
+  return s;
 }

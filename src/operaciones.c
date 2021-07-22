@@ -13,21 +13,14 @@
 
 #define STRLEN 50
 
-//TODO: ver input de strings
-
 char const* const atributosClave[CANT_ATRIBUTOS] = 
-	{ "nombre", "apellido", "edad", "telefono" };
+	{"nombre", "apellido", "edad", "telefono"};
 
 Resultado buscar(Entorno entorno) {
-  printf("Ingrese %s:\n>", atributosClave[NOMBRE]);
-  char* nombre = malloc(STRLEN); assert(nombre);
-  input_string(nombre, STRLEN);
-  printf("Ingrese %s:\n>", atributosClave[APELLIDO]);
-  char* apellido = malloc(STRLEN); assert(apellido); 
-  input_string(apellido, STRLEN);
-
-  Contacto dummy = contacto_crear(nombre, apellido, -1, NULL);
-  Contacto res = tablahash_buscar(entorno.tabla, dummy);
+  char* nombre = ingresar_string(atributosClave[NOMBRE], STRLEN); 
+  char* apellido = ingresar_string(atributosClave[APELLIDO], STRLEN);
+  Contacto dummy = contacto_crear(nombre,apellido, -1, NULL);
+  Contacto res = tablahash_buscar(entorno.agenda, dummy);
   contacto_destruir(dummy);
 
   if (res) contacto_imprimir(res); 
@@ -37,21 +30,14 @@ Resultado buscar(Entorno entorno) {
 }
 
 Resultado agregar(Entorno entorno) {
-  char* nombre = malloc(sizeof(STRLEN)); assert(nombre);
-  printf("Ingrese %s:\n>", atributosClave[NOMBRE]);
-  input_string(nombre, STRLEN);
-  char* apellido = malloc(sizeof(STRLEN)); assert(apellido);
-  printf("Ingrese %s:\n>", atributosClave[APELLIDO]);
-  input_string(apellido, STRLEN);
+  char* nombre = ingresar_string(atributosClave[NOMBRE], STRLEN);
+  char* apellido = ingresar_string(atributosClave[APELLIDO], STRLEN);
   unsigned int edad;
   printf("Ingrese %s:\n>", atributosClave[EDAD]);
-  scanf("%u", &edad); getchar();
-  char* telefono = malloc(sizeof(STRLEN)); assert(telefono);
-  printf("Ingrese %s:\n>", atributosClave[TELEFONO]);
-  input_string(telefono, STRLEN);
-  
+  scanf("%u", &edad); while(getchar() != '\n');
+  char* telefono = ingresar_string(atributosClave[TELEFONO], STRLEN);
   Contacto contacto = contacto_crear(nombre, apellido, edad, telefono);
-  if (!tablahash_insertar(entorno.tabla, contacto)) {
+  if (!tablahash_insertar(entorno.agenda, contacto)) {
     contacto_destruir(contacto); 
     return AGREGAR_EXISTE;
   }; 
@@ -61,15 +47,10 @@ Resultado agregar(Entorno entorno) {
 }
 
 Resultado eliminar(Entorno entorno) {
-  printf("Ingrese %s:\n>", atributosClave[NOMBRE]);
-  char* nombre = malloc(STRLEN); assert(nombre); 
-  input_string(nombre, STRLEN);
-  printf("Ingrese %s:\n>", atributosClave[APELLIDO]);
-  char* apellido = malloc(STRLEN); assert(apellido); 
-  input_string(apellido, STRLEN);
-
-  Contacto dummy = contacto_crear(nombre, apellido, -1, NULL);
-  Contacto eliminado = tablahash_eliminar(entorno.tabla, dummy);
+  char* nombre = ingresar_string(atributosClave[NOMBRE], STRLEN); 
+  char* apellido = ingresar_string(atributosClave[APELLIDO], STRLEN);
+  Contacto dummy = contacto_crear(nombre,apellido, -1, NULL);
+  Contacto eliminado = tablahash_eliminar(entorno.agenda, dummy);
   contacto_destruir(dummy);
 
   if (eliminado)
@@ -80,15 +61,10 @@ Resultado eliminar(Entorno entorno) {
 }
 
 Resultado editar(Entorno entorno) {
-  printf("Ingrese %s:\n>", atributosClave[NOMBRE]);
-  char* nombre = malloc(STRLEN); assert(nombre); 
-  input_string(nombre, STRLEN);
-  printf("Ingrese %s:\n>", atributosClave[APELLIDO]);
-  char* apellido = malloc(STRLEN); assert(apellido); 
-  input_string(apellido, STRLEN);
-
-  Contacto dummy = contacto_crear(nombre, apellido, -1, NULL);
-  Contacto contacto = tablahash_buscar(entorno.tabla, dummy);
+  char* nombre = ingresar_string(atributosClave[NOMBRE], STRLEN); 
+  char* apellido = ingresar_string(atributosClave[APELLIDO], STRLEN);
+  Contacto dummy = contacto_crear(nombre,apellido, -1, NULL);
+  Contacto contacto = tablahash_buscar(entorno.agenda, dummy);
   if (contacto == NULL) {
     contacto_destruir(dummy);
     return EDITAR_EXISTE;
@@ -98,12 +74,9 @@ Resultado editar(Entorno entorno) {
   dummy->telefono = contacto->telefono;
   int edad;
   printf("Ingrese %s:\n>", atributosClave[EDAD]);
-  scanf("%u", &edad); getchar();
+  scanf("%u", &edad); while(getchar() != '\n');
   contacto->edad = edad;
-  printf("Ingrese %s:\n>", atributosClave[TELEFONO]);
-  char* telefono = malloc(STRLEN); assert(telefono);
-  input_string(telefono, STRLEN);
-  contacto->telefono = telefono;
+  contacto->telefono = ingresar_string(atributosClave[TELEFONO], STRLEN);
   
   historial_hecho(entorno.historial, operacion_crear(EDITAR, dummy));
 
@@ -140,10 +113,8 @@ static Resultado cabecera_valida(FILE* fp) {
 }
 
 Resultado cargar(Entorno entorno) {
-  char ruta[STRLEN];
-  printf("Ingrese ruta de entrada:\n>");
-  scanf("%s", ruta);
-  FILE* fp = fopen(ruta, "r");
+  char* ruta = ingresar_string("ruta de entrada", STRLEN);  
+  FILE* fp = fopen(ruta, "r"); free(ruta);
   if (fp == NULL) return ARCHIVO_ENCONTRADO;
   
   Resultado res = cabecera_valida(fp);
@@ -186,7 +157,7 @@ Resultado cargar(Entorno entorno) {
       }
     }
     if (seguir) {
-      int insertado = tablahash_insertar(entorno.tabla, 
+      int insertado = tablahash_insertar(entorno.agenda, 
         contacto_crear(input[NOMBRE], input[APELLIDO], edad, input[TELEFONO]));
       if (!insertado) {
         printf("El contacto \"%s %s\" ya existe.\n",
@@ -208,13 +179,11 @@ static void escribir_contacto_general(void* contacto, void* fp) {
 }
 
 Resultado guardar(Entorno entorno) {
-  char ruta[STRLEN];
-  printf("Ingrese ruta de entrada:\n>");
-  scanf("%s", ruta);
-  FILE* fp = fopen(ruta, "w");
+  char* ruta = ingresar_string("ruta de entrada", STRLEN);  
+  FILE* fp = fopen(ruta, "w"); free(ruta);
   if (fp == NULL) return ARCHIVO_ERROR;
   escribir_cabecera(fp);
-  tablahash_recorrer(entorno.tabla, escribir_contacto_general, fp);
+  tablahash_recorrer(entorno.agenda, escribir_contacto_general, fp);
   fclose(fp);
   return EXITO;
 }
@@ -229,10 +198,10 @@ Resultado deshacer(Entorno entorno) {
     -1, NULL);
   switch (operacion->tag) {
     case AGREGAR:
-      tablahash_eliminar(entorno.tabla, dummy);
+      tablahash_eliminar(entorno.agenda, dummy);
       break;
     case EDITAR: {
-      Contacto contacto = tablahash_buscar(entorno.tabla, dummy);
+      Contacto contacto = tablahash_buscar(entorno.agenda, dummy);
       unsigned int edad = operacion->contacto->edad; 
       char* telefono = operacion->contacto->telefono; 
       operacion->contacto->edad = contacto->edad;
@@ -241,7 +210,7 @@ Resultado deshacer(Entorno entorno) {
       contacto->telefono = telefono;
       break; }
     case ELIMINAR:
-      tablahash_insertar(entorno.tabla, operacion->contacto);
+      tablahash_insertar(entorno.agenda, operacion->contacto);
       break; 
   }
   historial_deshecho(entorno.historial, operacion);
@@ -261,11 +230,11 @@ Resultado rehacer(Entorno entorno) {
     -1, NULL);
   switch (operacion->tag) {
     case AGREGAR:
-      tablahash_insertar(entorno.tabla, operacion->contacto);
+      tablahash_insertar(entorno.agenda, operacion->contacto);
       historial_hecho(entorno.historial, operacion);
       break;
     case EDITAR: {
-      Contacto contacto = tablahash_buscar(entorno.tabla, dummy);
+      Contacto contacto = tablahash_buscar(entorno.agenda, dummy);
       unsigned int edad = operacion->contacto->edad; 
       char* telefono = operacion->contacto->telefono; 
       operacion->contacto->edad = contacto->edad;
@@ -275,7 +244,7 @@ Resultado rehacer(Entorno entorno) {
       historial_hecho(entorno.historial, operacion);
       break; }
     case ELIMINAR:
-      tablahash_eliminar(entorno.tabla, operacion->contacto);
+      tablahash_eliminar(entorno.agenda, operacion->contacto);
       historial_hecho(entorno.historial, operacion);
       break; 
   }
@@ -287,14 +256,10 @@ Resultado rehacer(Entorno entorno) {
 
 static Resultado and_or(Entorno entorno, FuncionVisitante imprimir_contacto) {
   char* input[CANT_ATRIBUTOS];
-  for (int i = 0; i < CANT_ATRIBUTOS; i++) {
-    input[i] = malloc(STRLEN); assert(input[i]);
-  }
   unsigned int edad;
   int vacio = 1;
   for (int i = 0; i < CANT_ATRIBUTOS; i++) {
-    printf("Ingrese %s:\n>", atributosClave[i]);
-    scanf("%s", input[i]);
+    input[i] = ingresar_string(atributosClave[i], STRLEN);
     if (strcmp("vacio", input[i]) == 0)  {
       free(input[i]); input[i] = NULL;
       if (i == EDAD) edad = -1;  
@@ -310,7 +275,7 @@ static Resultado and_or(Entorno entorno, FuncionVisitante imprimir_contacto) {
   Contacto valores = 
     contacto_crear(input[NOMBRE], input[APELLIDO], edad, input[TELEFONO]);
   puts("");
-  tablahash_recorrer(entorno.tabla, imprimir_contacto, valores);
+  tablahash_recorrer(entorno.agenda, imprimir_contacto, valores);
   contacto_destruir(valores);
 
   return EXITO;
@@ -349,29 +314,27 @@ static void insertar_heap(void* contacto, void* heap) {
 }
 
 Resultado guardar_ordenado(Entorno entorno) {
-  char input[STRLEN];
-  printf("Ingrese ruta de salida:\n>");
-  scanf("%s", input);
-  FILE* fp = fopen(input, "w");
+  char* ruta = ingresar_string("ruta de entrada", STRLEN);  
+  FILE* fp = fopen(ruta, "w"); free(ruta);
   if (fp == NULL) return ARCHIVO_ERROR;
-  printf("Ingrese nombre de atributo:\n>");
-  scanf("%s", input);
+  char* atributo = ingresar_string("nombre de atributo", STRLEN);
   FuncionComparadora comp;
-  if (strcmp(atributosClave[NOMBRE], input) == 0) 
+  if (strcmp(atributosClave[NOMBRE], atributo) == 0) 
     comp = comparar_nombre;
-  else if (strcmp(atributosClave[APELLIDO], input) == 0) 
+  else if (strcmp(atributosClave[APELLIDO], atributo) == 0) 
     comp = comparar_apellido;
-  else if (strcmp(atributosClave[EDAD], input) == 0) 
+  else if (strcmp(atributosClave[EDAD], atributo) == 0) 
     comp = comparar_edad;
-  else if (strcmp(atributosClave[TELEFONO], input) == 0) 
+  else if (strcmp(atributosClave[TELEFONO], atributo) == 0) 
     comp = comparar_telefono;
   else {
-    fclose(fp); return GUARDAR_ORDENADO_ATRUBUTO;
+    fclose(fp); free(atributo); 
+    return GUARDAR_ORDENADO_ATRUBUTO;
   }
-  
+  free(atributo);
   escribir_cabecera(fp);
-  Heap contactosOrdenados = heap_crear(tablahash_nelems(entorno.tabla), comp);
-  tablahash_recorrer(entorno.tabla, insertar_heap, contactosOrdenados);
+  Heap contactosOrdenados = heap_crear(tablahash_nelems(entorno.agenda), comp);
+  tablahash_recorrer(entorno.agenda, insertar_heap, contactosOrdenados);
   while (!heap_vacio(contactosOrdenados)) 
     escribir_contacto(heap_extraer(contactosOrdenados), fp);
   heap_destruir(contactosOrdenados);
@@ -393,21 +356,22 @@ static int comparar_edad_decr(void* contacto1, void* contacto2) {
 Resultado buscar_suma_edades(Entorno entorno) {
   unsigned int suma;
   printf("Ingrese un natural:\n>");
-  scanf("%u", &suma); if (suma == 0) return SUMA_EDADES_CERO;
+  scanf("%u", &suma); while(getchar() != '\n'); 
+  if (suma == 0) return SUMA_EDADES_CERO;
 
-  unsigned int ncontactos = tablahash_nelems(entorno.tabla);
+  unsigned int ncontactos = tablahash_nelems(entorno.agenda);
   if (ncontactos == 0) return SUMA_EDADES_ENCONTRADO;
 
   unsigned int sumaEdades = 0;
-  tablahash_recorrer(entorno.tabla, sumar_edad, &sumaEdades);
+  tablahash_recorrer(entorno.agenda, sumar_edad, &sumaEdades);
   if (suma > sumaEdades) return SUMA_EDADES_ENCONTRADO;
   else if (suma == sumaEdades) {
-    tablahash_recorrer(entorno.tabla, imprimir_contacto, NULL);
+    tablahash_recorrer(entorno.agenda, imprimir_contacto, NULL);
     return EXITO;
   }
 
   Heap contactos = heap_crear(ncontactos, comparar_edad_decr);
-  tablahash_recorrer(entorno.tabla, insertar_heap, contactos);
+  tablahash_recorrer(entorno.agenda, insertar_heap, contactos);
   
   Contacto** mem[2];
   mem[0] = malloc(sizeof(Contacto*) * (suma + 1)); assert(mem[0]);

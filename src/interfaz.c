@@ -112,7 +112,7 @@ void iniciar_interfaz(TablaHash agenda) {
   int accion;
   while(!salir) {
     printf("\nSeleccione una accion:\n>");
-    scanf("%d", &accion); getchar();
+    scanf("%d", &accion); while(getchar() != '\n');
     switch (accion){
     case 1:
       manejar_resultado(buscar(entorno));
