@@ -196,7 +196,7 @@ static void escribir_contacto_general(void* contacto, void* fp) {
 }
 
 Resultado guardar(Entorno entorno) {
-  char* ruta = ingresar_string("ruta de entrada", STRLEN);  
+  char* ruta = ingresar_string("ruta de salida", STRLEN);  
   FILE* fp = fopen(ruta, "w"); free(ruta);
   if (fp == NULL) return ARCHIVO_ERROR;
   escribir_cabecera(fp);
@@ -333,7 +333,7 @@ static void insertar_heap(void* contacto, void* heap) {
 }
 
 Resultado guardar_ordenado(Entorno entorno) {
-  char* ruta = ingresar_string("ruta de entrada", STRLEN);  
+  char* ruta = ingresar_string("ruta de salida", STRLEN);  
   FILE* fp = fopen(ruta, "w"); free(ruta);
   if (fp == NULL) return ARCHIVO_ERROR;
   char* atributo = ingresar_string("nombre de atributo", STRLEN);

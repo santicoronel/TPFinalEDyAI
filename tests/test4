@@ -1,5 +1,6 @@
 5
-input.txt
-12
-500
+tests/input.csv
+11
+tests/out.csv
+telefono
 13
