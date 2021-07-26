@@ -1,6 +1,6 @@
 5
-input.txt
+tests/input.csv
 11
-out.txt
+tests/out.csv
 edad
 13

@@ -21,6 +21,6 @@ char* ingresar_string(const char* valor, int strlen) {
   int c, i;
   for (i = 0; i < strlen - 1 && ((c = getchar()) != '\n'); i++) s[i] = c; 
   s[i] = '\0';
-  while (c != '\n') c = getchar(); //vacia el buffer
+  while (c != '\n') c = getchar(); // Vacia el buffer.
   return s;
 }
